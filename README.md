@@ -1,2 +1,2 @@
-# studis-school
+# testing-repository
 Created with CodeSandbox
