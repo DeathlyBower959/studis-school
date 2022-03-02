@@ -1,10 +1,25 @@
 import './styles.css'
 
-export default function App() {
+import { Routes, Route } from 'react-router-dom'
+
+// Pages
+import PageNotFound from './pages/PageNotFound'
+import Landing from './pages/Landing'
+
+const App = () => {
   return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing see some magc happen!</h2>
-    </div>
+    <Routes>
+      <Route path="*" element={<PageNotFound/>} />
+
+      <Route path="/" element={<Landing/>} />
+
+      {/* Planner */}
+      <Route path="/planner" element={<Landing/>} />
+
+      {/* Study */}
+      <Route path="/study" element={<Landing/>} />
+    </Routes>
   )
 }
+
+export default App

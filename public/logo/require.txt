@@ -1,0 +1,8 @@
+FILES REQUIRED IN LOGO FOLDER
+
+logo16.png
+logo24.png
+logo32.png
+logo64.png
+logo192.png
+logo1024.png
