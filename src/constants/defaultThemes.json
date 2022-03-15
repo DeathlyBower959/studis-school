@@ -1,0 +1,65 @@
+{
+  "themes": [
+    {
+      "themeID": "default_themes.dark",
+      "name": "Default - Dark",
+
+      "navbar": {
+        "background": "#2d2d2d",
+        "foreground": "#ff0000"
+      },
+
+      "alert": {
+        "color": "#ffafb5",
+        "background": "#5f3235",
+        "border": "#764548"
+      },
+
+      "foreground": "#fff",
+      "secondaryForeground": "#d4d4d4",
+
+      "accent": "#a74ef6",
+      "secondaryAccent": "#6e00cf",
+
+      "background": "#282828",
+      "secondaryBackground": "#323232",
+      "thirdBackground": "#3c3c3c",
+      "inputBackground": "#444444",
+
+      "muted": "#a0a0a0",
+      "disabledText": "#545454",
+
+      "error": "#ff5252"
+    },
+    {
+      "themeID": "default_themes.light",
+      "name": "Default - Light",
+
+      "navbar": {
+        "background": "#d8d8d8",
+        "foreground": "#bababa"
+      },
+      "alert": {
+        "color": "#842029",
+        "background": "#f8d7da",
+        "border": "#f5c2c7"
+      },
+
+      "foreground": "#3f3f3f",
+      "secondaryForeground": "#707070",
+
+      "accent": "#d5a4ff",
+      "secondaryAccent": "#a43bff",
+
+      "background": "#fafafa",
+      "secondaryBackground": "#e6e6e6",
+      "thirdBackground": "#d2d2d2",
+      "inputBackground": "#bebebe",
+
+      "muted": "#545454",
+      "disabledText": "#a1a1a1",
+
+      "error": "#ff3333"
+    }
+  ]
+}

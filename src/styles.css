@@ -1,4 +1,10 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
+* {
+  box-sizing: border-box;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Modify Scrollbar css */
