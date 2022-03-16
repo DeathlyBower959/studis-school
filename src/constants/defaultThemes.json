@@ -6,7 +6,7 @@
 
       "navbar": {
         "background": "#2d2d2d",
-        "foreground": "#ff0000"
+        "foreground": "#888"
       },
 
       "alert": {

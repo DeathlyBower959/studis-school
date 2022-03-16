@@ -16,8 +16,8 @@ const LinkWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 `
 
 const NavLink = styled(Link)`

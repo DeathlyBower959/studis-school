@@ -1,7 +1,11 @@
 import './styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import {
+  Routes as ReactRoutes,
+  Route,
+  useNavigate
+} from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState, useCallback } from 'react'
@@ -9,6 +13,7 @@ import styled from 'styled-components'
 
 // Components
 import Navbar from './components/Navbar'
+import Routes from './atoms/Routes/Routes'
 
 // Pages
 import PageNotFound from './pages/PageNotFound'
@@ -17,6 +22,8 @@ import Planner from './pages/Planner'
 import About from './pages/About'
 import Community from './pages/Community'
 import Dictionary from './pages/Dictionary'
+import Signup from './pages/Signup'
+import Login from './pages/Login'
 
 // Contexts
 import ToastNotifContext from './contexts/ToastNotifContext'
@@ -43,89 +50,10 @@ const App = () => {
 
   // Allows navigating the page programatically without user input
   // navigate("/PATH", { replace: true });
-
   const navigate = useNavigate()
 
-  // Function to log the user in.
-  // If email and password are supplied, attempts to log in user
-  // Otherwise logs in user with the saved token
-  const AuthLogin = useCallback(async (email = null, password = null) => {
-    const LoginPromise = new Promise(async (resolve, reject) => {
-      // Wait 50ms for the notification to popup
-      await sleep(100)
-
-      // No email or password was specified, but we have a token we can attempt to log in with
-      if (!email && !password && localAuth) {
-        // Tries to get the users data using their token
-        const retrievedUser = await getUser(localAuth)
-
-        // Request for user data failed
-        if (retrievedUser.isMissing || retrievedUser?.status !== 200) {
-          // Sets userData to null, so know that we failed to get userdata
-          if (userData === 'none') setUserData(null)
-          // If we are not missing token, then remove token
-          if (retrievedUser?.status !== 200) AuthLogout()
-          return reject('User not found!')
-        }
-        // Update userData with the retrieved data
-        setUserData(retrievedUser.data)
-        resolve('User Found!')
-      }
-
-      // email and password are specified, so attempting to log in with credentials
-      if (email && password) {
-        // Attemping login to retreive a token
-        const loginData = await login(email, password)
-
-        // Request to login failed
-        if (loginData.isMissing || loginData?.status !== 200) {
-          // Sets userData to null, so know that we failed to get userdata
-          if (userData === 'none') setUserData(null)
-          return reject('User not found!')
-        }
-
-        const retrievedUser = await getUser(loginData.data.token)
-
-        // Request for user data failed
-        if (retrievedUser.isMissing || retrievedUser?.status !== 200) {
-          // Sets userData to null, so know that we failed to get userdata
-          if (userData === 'none') setUserData(null)
-          // If we are not missing token, then remove token
-          if (retrievedUser?.status !== 200) AuthLogout()
-          return reject('User not found!')
-        }
-
-        // Sets token for autologin
-        setLocalAuth(loginData.data.token)
-
-        // Sets userData, so we can access later
-        setUserData(retrievedUser.data)
-        resolve('User Found!')
-      }
-    })
-
-    // Attempts to login only if we specifiy an email OR we have a token
-    if (localAuth || (email && password)) {
-      SendToast(
-        {
-          promise: LoginPromise,
-          pending: 'Logging you in...',
-          error: 'Failed to login!',
-          success: 'Successfully logged in!'
-        },
-        'promise'
-      )
-    }
-  }, [])
-
-  const AuthLogout = () => {
-    setUserData(null)
-    setLocalAuth(null)
-    navigate('/login', { replace: true })
-  }
-
   useEffect(() => {
-    AuthLogin('maryjane1988@gmail.com', 'MaryJane123')
+    AuthLogin()
   }, [])
 
   // Choosing Default Themes etc
@@ -219,6 +147,100 @@ const App = () => {
     [theme]
   )
 
+  // Function to log the user in.
+  // If email and password are supplied, attempts to log in user
+  // Otherwise logs in user with the saved token
+  const AuthLogin = useCallback(
+    async (email = null, password = null) => {
+      const LoginPromise = new Promise(async (resolve, reject) => {
+        // Wait 50ms for the notification to popup
+        await sleep(100)
+
+        // No email or password was specified, but we have a token we can attempt to log in with
+        if (!email && !password && localAuth) {
+          // Tries to get the users data using their token
+          const retrievedUser = await getUser(localAuth)
+
+          // Request for user data failed
+          if (retrievedUser.isMissing || retrievedUser?.status !== 200) {
+            // Sets userData to null, so know that we failed to get userdata
+            if (userData === 'none') setUserData(null)
+            // If we are not missing token, then remove token
+            if (retrievedUser?.status !== 200) AuthLogout()
+            return reject('User not found!')
+          }
+          // Update userData with the retrieved data
+          setUserData(retrievedUser.data)
+          resolve('User Found!')
+        }
+
+        // email and password are specified, so attempting to log in with credentials
+        if (email && password) {
+          // Attemping login to retreive a token
+          const loginData = await login(email, password)
+
+          // Request to login failed
+          if (loginData.isMissing || loginData?.status !== 200) {
+            // Sets userData to null, so know that we failed to get userdata
+            if (userData === 'none') setUserData(null)
+            return reject('User not found!')
+          }
+
+          const retrievedUser = await getUser(loginData.data.token)
+
+          // Request for user data failed
+          if (retrievedUser.isMissing || retrievedUser?.status !== 200) {
+            // Sets userData to null, so know that we failed to get userdata
+            if (userData === 'none') setUserData(null)
+            // If we are not missing token, then remove token
+            if (retrievedUser?.status !== 200) AuthLogout()
+            return reject('User not found!')
+          }
+
+          // Sets token for autologin
+          setLocalAuth(loginData.data.token)
+
+          // Sets userData, so we can access later
+          setUserData(retrievedUser.data)
+          resolve('User Found!')
+        }
+      })
+
+      // Attempts to login only if we specifiy an email OR we have a token
+      if (localAuth || (email && password)) {
+        SendToast(
+          {
+            promise: LoginPromise,
+            pending: 'Logging you in...',
+            error: 'Failed to login!',
+            success: 'Successfully logged in!'
+          },
+          'promise'
+        )
+      } else {
+        setUserData(null)
+        setLocalAuth(null)
+      }
+    },
+    [userData, localAuth, SendToast]
+  )
+
+  const AuthLogout = useCallback(() => {
+    setUserData(null)
+    setLocalAuth(null)
+    navigate('/login', { replace: true })
+  }, [])
+
+  // 0 = Not Logged In
+  // 1 = Logged In
+  // 2 = Logging In
+  const isLoggedIn = useCallback(() => {
+    if (!userData) return 0
+    if (userData == 'none') return 2
+
+    return 1
+  }, [userData])
+
   return (
     <ThemeProvider theme={theme}>
       <ToastContainer
@@ -240,58 +262,71 @@ const App = () => {
             AuthLogin,
             AuthLogout,
             userData,
-            setUserData
+            setUserData,
+            isLoggedIn
           }}>
           <Navbar />
-          <Routes>
+          <ReactRoutes>
             <Route path="*" element={<PageNotFound />} />
 
             <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Landing />} />
-            <Route path="/signup" element={<Landing />} />
-            <Route path="/about" element={<About />} />
 
-            {/* Planner */}
-            <Route path="/planner" element={<Planner />} />
+            {/* MUST BE LOGGED OUT */}
+            <Route element={<Routes.NoAccount />}>
+              <Route path="/login" element={<About />} />
+              <Route path="/signup" element={<Landing />} />
+              <Route path="/about" element={<About />} />
+            </Route>
 
-            {/* Study */}
-            <Route path="/study" element={<Landing />} />
+            {/* MUST BE LOGGED IN */}
+            <Route element={<Routes.RequireAuth />}>
+              {/* Planner */}
+              <Route path="/planner" element={<Planner />} />
 
-            <Route path="/study/new" element={<Landing />} />
-            <Route path="/study/view" element={<Landing />} />
+              {/* Study */}
+              <Route path="/study" element={<Landing />} />
 
-            <Route path="/study/saved" element={<Landing />} />
-            <Route path="/study/sets" element={<Landing />} />
+              <Route path="/study/new" element={<Landing />} />
+              <Route path="/study/view" element={<Landing />} />
 
-            <Route path="/study/saved/edit/:id" element={<Landing />} />
-            <Route path="/study/sets/edit/:id" element={<Landing />} />
+              <Route path="/study/saved" element={<Landing />} />
+              <Route path="/study/sets" element={<Landing />} />
 
-            <Route path="/study/saved/view/:id" element={<Landing />} />
-            <Route path="/study/sets/view/:id" element={<Landing />} />
+              <Route path="/study/saved/edit/:id" element={<Landing />} />
+              <Route path="/study/sets/edit/:id" element={<Landing />} />
 
-            <Route path="/study/saved/flash/:id" element={<Landing />} />
-            <Route path="/study/sets/flash/:id" element={<Landing />} />
+              <Route path="/study/saved/view/:id" element={<Landing />} />
+              <Route path="/study/sets/view/:id" element={<Landing />} />
 
-            <Route path="/study/saved/test/:id" element={<Landing />} />
-            <Route path="/study/sets/test/:id" element={<Landing />} />
+              <Route path="/study/saved/flash/:id" element={<Landing />} />
+              <Route path="/study/sets/flash/:id" element={<Landing />} />
 
-            <Route path="/study/saved/learn/:id" element={<Landing />} />
-            <Route path="/study/sets/learn/:id" element={<Landing />} />
+              <Route path="/study/saved/test/:id" element={<Landing />} />
+              <Route path="/study/sets/test/:id" element={<Landing />} />
 
-            {/* Dictionary (Saved Words) */}
-            <Route path="/words " element={<Landing />} />
-            <Route path="/words/new " element={<Landing />} />
-            <Route path="/words/view/:id" element={<Landing />} />
-            <Route path="/words/edit/:id " element={<Landing />} />
+              <Route path="/study/saved/learn/:id" element={<Landing />} />
+              <Route path="/study/sets/learn/:id" element={<Landing />} />
 
-            {/* Community */}
-            <Route path="/community" element={<Landing />} />
-            <Route path="/community/leaders" element={<Landing />} />
-            <Route path="/community/:userId" element={<Landing />} />
-            <Route path="/community/:userId/sets/:setId" element={<Landing />} />
-            <Route path="/community/:userId/words/:wordId" element={<Landing />} />
+              {/* Dictionary (Saved Words) */}
+              <Route path="/words " element={<Landing />} />
+              <Route path="/words/new " element={<Landing />} />
+              <Route path="/words/view/:id" element={<Landing />} />
+              <Route path="/words/edit/:id " element={<Landing />} />
 
-          </Routes>
+              {/* Community */}
+              <Route path="/community" element={<Landing />} />
+              <Route path="/community/leaders" element={<Landing />} />
+              <Route path="/community/:userId" element={<Landing />} />
+              <Route
+                path="/community/:userId/sets/:setId"
+                element={<Landing />}
+              />
+              <Route
+                path="/community/:userId/words/:wordId"
+                element={<Landing />}
+              />
+            </Route>
+          </ReactRoutes>
           <WebsiteBackground />
         </AccountContext.Provider>
       </ToastNotifContext.Provider>
