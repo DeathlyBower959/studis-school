@@ -1,17 +1,19 @@
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
-const LinkBody = ({ text, url }) => {
+const LinkBody = ({ text, url, ...props }) => {
   return (
     <LinkWrapper>
-      <NavLink to={url}>{text}</NavLink>
+      <NavLink to={url} {...props}>
+        {text}
+      </NavLink>
     </LinkWrapper>
-  );
-};
+  )
+}
 
 const LinkWrapper = styled.div`
   height: 100%;
-  width: min-content;
+  width: max-content;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,8 +23,13 @@ const LinkWrapper = styled.div`
 `
 
 const NavLink = styled(Link)`
-  color: ${props => props.theme.navbar.foreground};
+  color: ${(props) => props.theme.navbar.foreground};
   text-decoration: none;
+  transition: filter 250ms ease-in-out;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
 `
 
-export default LinkBody;
+export default LinkBody

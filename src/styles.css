@@ -1,15 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Marck+Script&family=Nanum+Brush+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lily+Script+One&family=Marck+Script&family=Bad+Script&display=swap');
+
 
 * {
   box-sizing: border-box;
+}
+
+
+html {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
 
 body {
   margin: 0;
   padding: 0;
 
-  font-family: 'Segoe UI', Geneva, Verdana, sans-serif;
+  height: 100%;
+
+  font-family: 'Lily Script One', 'Segoe UI', Geneva, Verdana, sans-serif;
   overflow-x: hidden;
+  overflow: overlay;
 }
 
-/* Modify Scrollbar css */
+/* Modify Scrollbar Style */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* TRYING TO MAKE THIS DYNAMIC BASED ON THEME */
+::-webkit-scrollbar-thumb {
+  background-color: red;
+  border-radius: 10px;
+	-webkit-box-shadow: rgba(0,0,0,.12) 0 3px 13px 1px;
+}

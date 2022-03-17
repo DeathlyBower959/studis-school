@@ -1,11 +1,7 @@
 import './styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 
-import {
-  Routes as ReactRoutes,
-  Route,
-  useNavigate
-} from 'react-router-dom'
+import { Routes as ReactRoutes, Route, useNavigate } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState, useCallback } from 'react'
@@ -16,14 +12,45 @@ import Navbar from './components/Navbar'
 import Routes from './atoms/Routes/Routes'
 
 // Pages
-import PageNotFound from './pages/PageNotFound'
 import Landing from './pages/Landing'
-import Planner from './pages/Planner'
+import PageNotFound from './pages/PageNotFound'
 import About from './pages/About'
-import Community from './pages/Community'
-import Dictionary from './pages/Dictionary'
-import Signup from './pages/Signup'
 import Login from './pages/Login'
+import Signup from './pages/Signup'
+
+// Planner (Not sure if we have time)
+// import Planner from "./pages/Planner";
+
+// Community
+import Community from './pages/Community/Community'
+import CommunityLeaders from './pages/Community/Leaders'
+import CommunityUserProfile from './pages/Community/UserProfile'
+import CommunityUserSet from './pages/Community/UserSet'
+import CommunityUserWord from './pages/Community/UserWord'
+
+// Study
+import Study from './pages/Study/Study'
+import StudyNew from './pages/Study/New'
+import StudyView from './pages/Study/View'
+// My Sets
+import StudyMySets from './pages/Study/MySets/MySets'
+import StudyMySetsEdit from './pages/Study/MySets/Edit'
+import StudyMySetsFlash from './pages/Study/MySets/Flash'
+import StudyMySetsLearn from './pages/Study/MySets/Learn'
+import StudyMySetsTest from './pages/Study/MySets/Test'
+import StudyMySetsView from './pages/Study/MySets/View'
+// SavedSets
+import StudySavedSets from './pages/Study/SavedSets/SavedSets'
+import StudySavedSetsEdit from './pages/Study/SavedSets/Edit'
+import StudySavedSetsFlash from './pages/Study/SavedSets/Flash'
+import StudySavedSetsetsLearn from './pages/Study/SavedSets/Learn'
+import StudySavedSetsTest from './pages/Study/SavedSets/Test'
+import StudySavedSetsView from './pages/Study/SavedSets/View'
+// Words
+import Words from './pages/Words/Words'
+import WordsNew from './pages/Words/New'
+import WordsView from './pages/Words/View'
+import WordsEdit from './pages/Words/Edit'
 
 // Contexts
 import ToastNotifContext from './contexts/ToastNotifContext'
@@ -56,6 +83,8 @@ const App = () => {
     AuthLogin()
   }, [])
 
+  const [DEBUG_ThemeIndex, DEBUG_setThemeIndex] = useState(0)
+
   // Choosing Default Themes etc
   const theme =
     userData?.settings?.themes[
@@ -66,7 +95,21 @@ const App = () => {
     userData?.settings?.themes.find(
       (theme) => theme.themeID === 'default_themes.dark'
     ) ||
-    defaultThemes.themes[0]
+    defaultThemes.themes[DEBUG_ThemeIndex]
+
+  const DEBUG_SwitchTheme = (index = null) => {
+    console.log('THIS IS ONLY DEBUG FOR TESTING THEMES')
+    if (index) DEBUG_setThemeIndex(index)
+    else
+      DEBUG_setThemeIndex((prev) => {
+        if (defaultThemes.themes.length - 1 == prev) return 0
+        return prev + 1
+      })
+
+    setTimeout(() => {
+      DEBUG_SwitchTheme()
+    }, 5000)
+  }
 
   const SendToast = useCallback(
     async (message, type, currentTheme = theme, icon = null) => {
@@ -153,8 +196,10 @@ const App = () => {
   const AuthLogin = useCallback(
     async (email = null, password = null) => {
       const LoginPromise = new Promise(async (resolve, reject) => {
-        // Wait 50ms for the notification to popup
+        // Wait 100ms for the notification to popup
         await sleep(100)
+
+        // DEBUG_SwitchTheme()
 
         // No email or password was specified, but we have a token we can attempt to log in with
         if (!email && !password && localAuth) {
@@ -236,7 +281,7 @@ const App = () => {
   // 2 = Logging In
   const isLoggedIn = useCallback(() => {
     if (!userData) return 0
-    if (userData == 'none') return 2
+    if (userData === 'none') return 2
 
     return 1
   }, [userData])
@@ -270,60 +315,90 @@ const App = () => {
             <Route path="*" element={<PageNotFound />} />
 
             <Route path="/" element={<Landing />} />
+            <Route path="/about" element={<About />} />
 
             {/* MUST BE LOGGED OUT */}
             <Route element={<Routes.NoAccount />}>
-              <Route path="/login" element={<About />} />
-              <Route path="/signup" element={<Landing />} />
-              <Route path="/about" element={<About />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
             </Route>
 
             {/* MUST BE LOGGED IN */}
             <Route element={<Routes.RequireAuth />}>
-              {/* Planner */}
-              <Route path="/planner" element={<Planner />} />
-
               {/* Study */}
-              <Route path="/study" element={<Landing />} />
+              <Route path="/study" element={<Study />} />
 
-              <Route path="/study/new" element={<Landing />} />
-              <Route path="/study/view" element={<Landing />} />
+              <Route path="/study/new" element={<StudyNew />} />
+              <Route path="/study/view" element={<StudyView />} />
 
-              <Route path="/study/saved" element={<Landing />} />
-              <Route path="/study/sets" element={<Landing />} />
+              <Route path="/study/saved" element={<StudySavedSets />} />
+              <Route path="/study/sets" element={<StudyMySets />} />
 
-              <Route path="/study/saved/edit/:id" element={<Landing />} />
-              <Route path="/study/sets/edit/:id" element={<Landing />} />
+              <Route
+                path="/study/saved/edit/:setId"
+                element={<StudySavedSetsEdit />}
+              />
+              <Route
+                path="/study/sets/edit/:setId"
+                element={<StudyMySetsEdit />}
+              />
 
-              <Route path="/study/saved/view/:id" element={<Landing />} />
-              <Route path="/study/sets/view/:id" element={<Landing />} />
+              <Route
+                path="/study/saved/view/:setId"
+                element={<StudySavedSetsView />}
+              />
+              <Route
+                path="/study/sets/view/:setId"
+                element={<StudyMySetsView />}
+              />
 
-              <Route path="/study/saved/flash/:id" element={<Landing />} />
-              <Route path="/study/sets/flash/:id" element={<Landing />} />
+              <Route
+                path="/study/saved/flash/:setId"
+                element={<StudySavedSetsFlash />}
+              />
+              <Route
+                path="/study/sets/flash/:setId"
+                element={<StudyMySetsFlash />}
+              />
 
-              <Route path="/study/saved/test/:id" element={<Landing />} />
-              <Route path="/study/sets/test/:id" element={<Landing />} />
+              <Route
+                path="/study/saved/test/:setId"
+                element={<StudySavedSetsTest />}
+              />
+              <Route
+                path="/study/sets/test/:setId"
+                element={<StudyMySetsTest />}
+              />
 
-              <Route path="/study/saved/learn/:id" element={<Landing />} />
-              <Route path="/study/sets/learn/:id" element={<Landing />} />
+              <Route
+                path="/study/saved/learn/:setId"
+                element={<StudySavedSetsetsLearn />}
+              />
+              <Route
+                path="/study/sets/learn/:setId"
+                element={<StudyMySetsLearn />}
+              />
 
               {/* Dictionary (Saved Words) */}
-              <Route path="/words " element={<Landing />} />
-              <Route path="/words/new " element={<Landing />} />
-              <Route path="/words/view/:id" element={<Landing />} />
-              <Route path="/words/edit/:id " element={<Landing />} />
+              <Route path="/words" element={<Words />} />
+              <Route path="/words/new" element={<WordsNew />} />
+              <Route path="/words/view/:wordId" element={<WordsView />} />
+              <Route path="/words/edit/:wordId" element={<WordsEdit />} />
 
               {/* Community */}
-              <Route path="/community" element={<Landing />} />
-              <Route path="/community/leaders" element={<Landing />} />
-              <Route path="/community/:userId" element={<Landing />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/community/leaders" element={<CommunityLeaders />} />
+              <Route
+                path="/community/:userId"
+                element={<CommunityUserProfile />}
+              />
               <Route
                 path="/community/:userId/sets/:setId"
-                element={<Landing />}
+                element={<CommunityUserSet />}
               />
               <Route
                 path="/community/:userId/words/:wordId"
-                element={<Landing />}
+                element={<CommunityUserWord />}
               />
             </Route>
           </ReactRoutes>
@@ -341,7 +416,7 @@ const WebsiteBackground = styled.div`
   right: 0;
   bottom: 0;
 
-  z-index: -99999;
+  z-index: -999999;
 
   background-color: ${(props) => props.theme.background};
 `
