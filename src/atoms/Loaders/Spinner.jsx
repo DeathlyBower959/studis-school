@@ -5,12 +5,11 @@ const Spinner = ({ height, speed = '1s' }) => {
 }
 
 const Loader = styled.div`
-  border: 4px solid ${(props) => props.theme.thirdBackground};
+  border: 4px solid ${(props) => props.theme.tertiaryBackground};
   border-top: 4px solid ${(props) => props.theme.secondaryAccent};
   border-radius: 50%;
   height: ${(props) => props.height};
-  /* width: ${props => props.height}; */
-  aspect-ratio: 1/1;
+  width: ${props => props.height};
 
   animation: spin ${(props) => props.speed} linear infinite;
 

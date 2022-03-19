@@ -2,11 +2,12 @@
     "themes": [
       {
         "themeID": "default_themes.dark",
-        "name": "Default - Dark",
+        "name": "Dark",
   
         "navbar": {
           "background": "#2d2d2d",
-          "foreground": "#888"
+          "foreground": "#888",
+          "outline": "#363636"
         },
   
         "alert": {
@@ -17,13 +18,14 @@
   
         "foreground": "#fff",
         "secondaryForeground": "#d4d4d4",
+        "tertiaryForeground": "#b0b0b0",
   
         "accent": "#4e6bf6",
         "secondaryAccent": "#0030ff",
   
         "background": "#282828",
         "secondaryBackground": "#323232",
-        "thirdBackground": "#3c3c3c",
+        "tertiaryBackground": "#3c3c3c",
         "inputBackground": "#444444",
   
         "muted": "#a0a0a0",
@@ -33,11 +35,12 @@
       },
       {
         "themeID": "default_themes.light",
-        "name": "Default - Light",
+        "name": "Light",
   
         "navbar": {
           "background": "#d8d8d8",
-          "foreground": "#a1a1a1"
+          "foreground": "#a1a1a1",
+          "outline": "red"
         },
         "alert": {
           "color": "#842029",
@@ -47,13 +50,14 @@
   
         "foreground": "#3f3f3f",
         "secondaryForeground": "#707070",
+        "tertiaryForeground": "#d4d4d4",
   
         "accent": "#819ce3",
         "secondaryAccent": "#3b72ff",
   
         "background": "#fafafa",
         "secondaryBackground": "#e6e6e6",
-        "thirdBackground": "#d2d2d2",
+        "tertiaryBackground": "#d2d2d2",
         "inputBackground": "#bebebe",
   
         "muted": "#545454",

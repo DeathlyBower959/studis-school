@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 const InputButton = styled.button`
-    padding: 0.75em 2em;
+    padding: 0.6em 2em;
     color: ${(props) => props.theme.foreground};
     font-size: clamp(12px, 4vw, 15px);
     font-weight: 600;

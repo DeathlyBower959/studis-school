@@ -11,7 +11,7 @@ const Login = () => {
   const { AuthLogin } = useContext(Account)
 
   const Login = () => {
-    AuthLogin(values.email, values.password)
+    AuthLogin(values.email?.toLowerCase(), values.password)
   }
 
   const { values, errors, handleChange, handleSubmit } = useForm(
@@ -96,7 +96,7 @@ const InnerWrapper = styled.div`
   max-width: 400px;
 
   padding: 1em 3em;
-  background-color: ${props => props.theme.thirdBackground};
+  background-color: ${props => props.theme.tertiaryBackground};
   border-radius: 20px;
 `
 

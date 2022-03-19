@@ -1,7 +1,7 @@
 import './styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { Routes as ReactRoutes, Route, useNavigate } from 'react-router-dom'
+import { Routes as ReactRoutes, Route, useNavigate, useLocation} from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState, useCallback } from 'react'
@@ -17,6 +17,7 @@ import PageNotFound from './pages/PageNotFound'
 import About from './pages/About'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import Settings from './pages/Settings'
 
 // Planner (Not sure if we have time)
 // import Planner from "./pages/Planner";
@@ -72,44 +73,22 @@ const App = () => {
   // If successfull login, it is an object of all the user data (must manually update)
   const [userData, setUserData] = useState('none')
 
+  
   // Used for automatic login on page refresh etc
   const [localAuth, setLocalAuth] = useLocalStorage('authToken', null)
-
+  
   // Allows navigating the page programatically without user input
   // navigate("/PATH", { replace: true });
   const navigate = useNavigate()
-
-  useEffect(() => {
-    AuthLogin()
-  }, [])
-
-  const [DEBUG_ThemeIndex, DEBUG_setThemeIndex] = useState(0)
-
+  const location = useLocation()
+  
   // Choosing Default Themes etc
   const theme =
-    userData?.settings?.themes[
-      userData?.settings?.themes.findIndex(
-        (t) => t.themeID === userData?.settings?.selectedTheme
+    defaultThemes.themes[
+      defaultThemes.themes.findIndex(
+        (theme) => theme.themeID == userData?.settings?.selectedTheme
       )
-    ] ||
-    userData?.settings?.themes.find(
-      (theme) => theme.themeID === 'default_themes.dark'
-    ) ||
-    defaultThemes.themes[DEBUG_ThemeIndex]
-
-  const DEBUG_SwitchTheme = (index = null) => {
-    console.log('THIS IS ONLY DEBUG FOR TESTING THEMES')
-    if (index) DEBUG_setThemeIndex(index)
-    else
-      DEBUG_setThemeIndex((prev) => {
-        if (defaultThemes.themes.length - 1 == prev) return 0
-        return prev + 1
-      })
-
-    setTimeout(() => {
-      DEBUG_SwitchTheme()
-    }, 5000)
-  }
+    ] || defaultThemes.themes[0]
 
   const SendToast = useCallback(
     async (message, type, currentTheme = theme, icon = null) => {
@@ -190,6 +169,12 @@ const App = () => {
     [theme]
   )
 
+  const AuthLogout = useCallback(() => {
+    setUserData(null)
+    setLocalAuth(null)
+    navigate('/login', { replace: true })
+  }, [navigate])
+
   // Function to log the user in.
   // If email and password are supplied, attempts to log in user
   // Otherwise logs in user with the saved token
@@ -198,8 +183,6 @@ const App = () => {
       const LoginPromise = new Promise(async (resolve, reject) => {
         // Wait 100ms for the notification to popup
         await sleep(100)
-
-        // DEBUG_SwitchTheme()
 
         // No email or password was specified, but we have a token we can attempt to log in with
         if (!email && !password && localAuth) {
@@ -267,13 +250,11 @@ const App = () => {
         setLocalAuth(null)
       }
     },
-    [userData, localAuth, SendToast]
+    [userData, localAuth, SendToast, AuthLogout]
   )
 
-  const AuthLogout = useCallback(() => {
-    setUserData(null)
-    setLocalAuth(null)
-    navigate('/login', { replace: true })
+  useEffect(() => {
+    AuthLogin()
   }, [])
 
   // 0 = Not Logged In
@@ -325,6 +306,7 @@ const App = () => {
 
             {/* MUST BE LOGGED IN */}
             <Route element={<Routes.RequireAuth />}>
+              <Route path="/settings" element={<Settings />} />
               {/* Study */}
               <Route path="/study" element={<Study />} />
 
