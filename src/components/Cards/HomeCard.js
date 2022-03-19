@@ -73,7 +73,7 @@ const CardWrapper = styled.div`
   height: 100%;
   text-align: center;
   transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.2);
 
   position: absolute;
   z-index: -1;
@@ -90,7 +90,7 @@ const CardWrapper = styled.div`
     rotateZ(
       ${(props) =>
         props.isCardFlipped
-          ? (35 + (props.offset * 15 || 0)) * -1 + 'deg'
+          ? (25 + (props.offset * 5 || 0)) * -1 + 'deg'
           : '0'}
     )
     ${(props) =>
@@ -98,33 +98,54 @@ const CardWrapper = styled.div`
       !props.isCardFlipped &&
       `translateX(-20px) translateY(-10px)`};
 
-  @media only screen and (max-width: 650px) {
-    transform: rotateY(${(props) => (props.isCardFlipped ? '180deg' : '0')})
-    translateX(${(props) => (props.isCardFlipped ? '-100%' : '0')})
-    translateY(${(props) => (props.isCardFlipped ? '100%' : '0')})
-    rotateZ(
-      ${(props) =>
-        props.isCardFlipped ? (props.offset * 3 || 0) * -1 + 'deg' : '0'}
-    )
-    ${(props) =>
-      props.$isEnd &&
-      !props.isCardFlipped &&
-      `translateX(-20px) translateY(-10px)`};
-  }
-
-  /* &:hover {
+  &:hover {
     transform: rotateY(${(props) => (props.isCardFlipped ? '-180deg' : '0')})
       rotateZ(
         ${(props) =>
           props.isCardFlipped
-            ? (35 + (props.offset * 15 || 0)) * -1 + 'deg'
-            : '0'}
+            ? (25 + (props.offset * 5 || 0)) * -1 + 'deg'
+            : (props.offset || 0) * -1 + 'deg'}
       )
       ${(props) =>
         props.$isEnd &&
         !props.isCardFlipped &&
         `translateX(-10px) translateY(-5px)`};
-  } */
+  }
+
+  @media only screen and (max-width: 650px) {
+    /* Return */
+  transition: transform 0.6s, z-index 0s 0.167s;
+  /* Forward */
+  ${(props) =>
+    props.isCardFlipped && 'transition: transform 0.6s, z-index 0.330s;'}
+  ${(props) => props.isCardFlipped && 'z-index: ' + (props.offset || 0) + ';'}
+    
+    transform: rotateY(${(props) => (props.isCardFlipped ? '180deg' : '0')})
+      translateX(${(props) => (props.isCardFlipped ? '-100%' : '0')})
+      translateY(${(props) => (props.isCardFlipped ? '100%' : '0')})
+      rotateZ(
+        ${(props) =>
+          props.isCardFlipped ? (props.offset * 3 || 0) * -1 + 'deg' : '0'}
+      )
+      ${(props) =>
+        props.$isEnd &&
+        !props.isCardFlipped &&
+        `translateX(-20px) translateY(-10px)`};
+
+    &:hover {
+      transform: rotateY(${(props) => (props.isCardFlipped ? '180deg' : '0')})
+      translateX(${(props) => (props.isCardFlipped ? '-100%' : '0')})
+      translateY(${(props) => (props.isCardFlipped ? '100%' : '0')})
+      rotateZ(
+        ${(props) =>
+          props.isCardFlipped ? (props.offset * 3 || 0) * -1 + 'deg' : '0'}
+      )
+      ${(props) =>
+        props.$isEnd &&
+        !props.isCardFlipped &&
+        `translateX(-20px) translateY(-10px)`};
+    }
+  }
 `
 
 const StyledCardFront = styled.div`
