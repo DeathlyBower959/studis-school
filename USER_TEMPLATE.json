@@ -1,0 +1,22 @@
+{
+    "_id" : "",
+    "name" : "",
+    "email" : "",
+    "password" : "",
+    "exp" : 0,
+    "prestiges" : 0,
+    "settings" : {
+        "selectedTheme" : "",
+        "_id" : ""
+    },
+    "competitors": [
+        ""
+    ],
+    "isVerified" : false,
+    "savedSets" : [],
+    "userSets" : [],
+    "savedWords" : [],
+    "createdAt" : ISODate("2022-03-19T02:47:07.588Z"),
+    "updatedAt" : ISODate("2022-03-19T02:50:06.232Z"),
+    "__v" : 0
+}

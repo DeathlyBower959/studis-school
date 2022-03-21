@@ -71,13 +71,17 @@ const Navbar = () => {
             </>
           )}
         </RightDiv>
-        <MobileAppLogo tabIndex="-1" to="/">
+        <MobileAppLogo tabIndex="-1" to="/" onClick={hideNav}>
           Studis
         </MobileAppLogo>
       </NavWrapper>
       <MobileNavBackground />
       <MobileNavWrapper className="noSelect">
-        <AppLogo tabIndex="-1" to="/" $isNavShown={isNavShown} $alwaysShow>
+        <AppLogo
+          tabIndex="-1"
+          to="/"
+          $isNavShown={isNavShown}
+          $alwaysShow>
           Studis
         </AppLogo>
         <HamburgerWrapper
@@ -86,7 +90,7 @@ const Navbar = () => {
             if (e.keyCode === 13) {
               e.preventDefault()
 
-              setShowNav((prev) => !prev  )
+              setShowNav((prev) => !prev)
             }
           }}>
           <Hamburger
@@ -109,6 +113,7 @@ const AppLogo = styled(ReactLink)`
   padding-left: 0.3em;
   font-size: 2em;
   transition: margin-left 600ms ease-in-out;
+  pointer-events: all;
 
   user-select: none;
 

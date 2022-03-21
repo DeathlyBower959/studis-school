@@ -1,22 +1,15 @@
 import styled from 'styled-components'
 import { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 
-export const CardContainer = ({
-  width,
-  height,
-  children,
-  isCenter,
-  ...props
-}) => {
+export const CardContainer = ({ children, ...props }) => {
   const [isCardFlipped, setIsCardFlipped] = useState(0)
 
   return (
-    <StyledCardContainer width={width} height={height} {...props}>
+    <StyledCardContainer {...props}>
       {children.map((child, index) => {
         return (
           <CardWrapper
-            // For some reason, adding a key here seems to disable animations?
+            maxw={props.maxw}
             key={`cardWrapper-${index}`}
             $isEnd={children.length - 1 === index}
             offset={index === 0 ? null : children.length - index}
@@ -63,9 +56,17 @@ export const EndCard = ({ children, ...props }) => {
 
 const StyledCardContainer = styled.div`
   background-color: transparent;
-  width: ${(props) => props.width};
-  height: ${(props) => props.height};
-  perspective: 1500px;
+  width: clamp(
+    ${(props) => props.minw},
+    ${(props) => props.prefferedw},
+    ${(props) => props.maxw}
+  );
+  height: clamp(
+    ${(props) => props.minh},
+    ${(props) => props.prefferedh},
+    ${(props) => props.maxh}
+  );
+  perspective: 3000px;
 `
 
 const CardWrapper = styled.div`
@@ -78,6 +79,7 @@ const CardWrapper = styled.div`
   position: absolute;
   z-index: -1;
 
+
   /* Return */
   transition: transform 0.6s, z-index 0s 0.185s;
   /* Forward */
@@ -89,9 +91,7 @@ const CardWrapper = styled.div`
   transform: rotateY(${(props) => (props.isCardFlipped ? '-180deg' : '0')})
     rotateZ(
       ${(props) =>
-        props.isCardFlipped
-          ? (25 + (props.offset * 5 || 0)) * -1 + 'deg'
-          : '0'}
+        props.isCardFlipped ? (25 + (props.offset * 5 || 0)) * -1 + 'deg' : '0'}
     )
     ${(props) =>
       props.$isEnd &&
@@ -112,7 +112,8 @@ const CardWrapper = styled.div`
         `translateX(-10px) translateY(-5px)`};
   }
 
-  @media only screen and (max-width: 650px) {
+  
+  @media only screen and (max-width: ${(props) => `calc(${props.maxw} * 3)`}) {
     /* Return */
   transition: transform 0.6s, z-index 0s 0.167s;
   /* Forward */
@@ -153,12 +154,12 @@ const StyledCardFront = styled.div`
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  background: linear-gradient(
-    135deg,
-    ${(props) => props.theme.accent},
-    ${(props) => props.theme.secondaryAccent}
-  );
-  color: black;
+  background: ${(props) =>
+    props.endcard
+      ? props.theme.tertiaryBackground
+      : `
+      linear-gradient(135deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)), 
+      linear-gradient(135deg, ${props.theme.accent}, ${props.theme.secondaryAccent})`};
 
   display: flex;
   flex-direction: column;

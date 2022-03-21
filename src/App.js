@@ -1,7 +1,7 @@
 import './styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { Routes as ReactRoutes, Route, useNavigate, useLocation} from 'react-router-dom'
+import { Routes as ReactRoutes, Route, useNavigate} from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState, useCallback } from 'react'
@@ -80,7 +80,6 @@ const App = () => {
   // Allows navigating the page programatically without user input
   // navigate("/PATH", { replace: true });
   const navigate = useNavigate()
-  const location = useLocation()
   
   // Choosing Default Themes etc
   const theme =
