@@ -29,6 +29,7 @@
         "inputBackground": "#444444",
   
         "muted": "#a0a0a0",
+        "secondaryMuted": "#808080",
         "disabledText": "#545454",
   
         "error": "#ff5252"
@@ -61,6 +62,7 @@
         "inputBackground": "#bebebe",
   
         "muted": "#545454",
+        "secondaryMuted": "#ff0000",
         "disabledText": "#a1a1a1",
   
         "error": "#ff3333"

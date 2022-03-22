@@ -1,6 +1,6 @@
-import styled from 'styled-components'
-import { useContext, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import styled, { ThemeContext } from 'styled-components'
+import { useContext, useEffect, useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 // Recharts
@@ -16,16 +16,17 @@ import {
 } from '../components/Cards/HomeCard'
 import Form from '../components/Forms/Form'
 
+// API
+import { getCompetitors } from '../api/community'
+
 // Contexts
 import Account from '../contexts/AccountContext'
 
 // Utils
-import { addNumberSuffix } from '../utils/addSuffix'
-import { checkInView } from '../utils/htmlDOM'
+import { addNumberSuffix, truncateString } from '../utils/strings'
 
 // Images
 import placeholderAvatar from '../assets/avatar_placeholder.png'
-// import ArrowSVG from '../assets/arrow.svg'
 
 // FAKE DATA
 const data = [
@@ -66,33 +67,20 @@ const data = [
   }
 ]
 
-const COMPETITORS = [
-  {
-    name: 'Mark Masha',
-    exp: 2000,
-    prestiege: 2,
-    leaderboard: 71
-  },
-  {
-    name: 'John Doe',
-    exp: 200,
-    prestiege: 1,
-    leaderboard: 102
-  },
-  {
-    name: 'Shylie Baskin',
-    exp: 4000,
-    prestiege: 3,
-    leaderboard: 2
-  }
-]
-
 const Landing = () => {
   const navigate = useNavigate()
   const { userData } = useContext(Account)
-  const [competitorIndex, setCompetitorIndex] = useState(0)
+  const theme = useContext(ThemeContext)
 
-  if (!userData)
+  const [currentCompetitors, setCurrentCompetitors] = useState([])
+
+  useEffect(() => {
+    if (!userData || userData == 'none') return setCurrentCompetitors(null)
+
+    refreshCompetitors()
+  }, [userData])
+
+  if (!userData || userData == 'none')
     return (
       <PageWrapper>
         <br />
@@ -145,16 +133,25 @@ const Landing = () => {
       </PageWrapper>
     )
 
+  const refreshCompetitors = async () => {
+    if (userData?.competitors?.length === 0) return setCurrentCompetitors([])
+    const competitors = await getCompetitors(userData?.competitors)
+    console.log(competitors)
+    if (competitors?.data) setCurrentCompetitors(competitors.data)
+  }
+
   // Means the user has an account
   return (
     <PageWrapper>
       <BlockHeader>Stats</BlockHeader>
       <BlockContainer>
         <StatContainer>
-          <StatData>Place: 3rd</StatData>
-          <StatData>Exp: 523</StatData>
-          <StatData>Prestiege: 3</StatData>
-          <StatData>Study Streak: 3</StatData>
+          <StatDataContainer>
+            <StatData>Place: 3rd</StatData>
+            <StatData>Exp: 523</StatData>
+            <StatData>prestige: 3</StatData>
+            <StatData>Study Streak: 3</StatData>
+          </StatDataContainer>
           <StatImage src={placeholderAvatar} />
         </StatContainer>
         <ChartContainer>
@@ -165,9 +162,17 @@ const Landing = () => {
                 marginLeft: '-2em'
               }}
               data={data}>
-              <Line type="monotone" dataKey="time" stroke="red" />
-              <XAxis dataKey="day" />
-              <YAxis dataKey="time" />
+              <Line type="monotone" dataKey="time" stroke={theme.accent} />
+              <XAxis
+                dataKey="day"
+                tick={{ fill: theme.secondaryMuted }}
+                stroke={theme.secondaryMuted}
+              />
+              <YAxis
+                dataKey="time"
+                tick={{ fill: theme.secondaryMuted }}
+                stroke={theme.secondaryMuted}
+              />
             </LineChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -196,19 +201,24 @@ const Landing = () => {
                       function (currentEntries) {
                         currentVisible = currentEntries[0].isIntersecting
 
-                        if (!prevVisible && currentVisible) {
-                          prevChild.scrollIntoView({ behavior: 'smooth' })
-                        }
-
                         currentObserver.unobserve(currentEntries[0].target)
+                        if (!prevVisible && currentVisible) {
+                          prevChild.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'nearest'
+                          })
+
+                          return
+                        }
                       },
-                      { threshold: [1] }
+                      { threshold: [0.8] }
                     )
 
                     currentObserver.observe(child)
                     prevObserver.unobserve(prevEntries[0].target)
                   },
-                  { threshold: [1] }
+                  { threshold: [0.8] }
                 )
 
                 if (prevChild) prevObserver.observe(prevChild)
@@ -226,20 +236,25 @@ const Landing = () => {
             />
           </ArrowLeft>
           <CompetitorInnerContainer id="competitor-inner">
-            {COMPETITORS.map((comp, index) => {
-              return (
-                <CompetitorContentContainer
-                  id={`competitor-${index}`}
-                  key={uuidv4()}>
-                  <CompetitorName>{comp.name}</CompetitorName>
-                  <CompetitorData>Exp: {comp.exp}</CompetitorData>
-                  <CompetitorData>Prestiege: {comp.prestiege}</CompetitorData>
-                  <CompetitorData>
-                    Leaderboard: {addNumberSuffix(comp.leaderboard)}
-                  </CompetitorData>
-                </CompetitorContentContainer>
-              )
-            })}
+            {currentCompetitors?.length > 0 &&
+              currentCompetitors.map((comp) => {
+                return (
+                  <CompetitorContentContainer id={comp.userId} key={uuidv4()}>
+                    <CompetitorName>{comp.name}</CompetitorName>
+                    <CompetitorData>Exp: {comp.exp}</CompetitorData>
+                    <CompetitorData>Prestige: {comp.prestiges}</CompetitorData>
+                    <CompetitorData>
+                      Leaderboard: {addNumberSuffix(comp.leaderboard)}
+                    </CompetitorData>
+                  </CompetitorContentContainer>
+                )
+              })}
+
+            {currentCompetitors?.length <= 0 && (
+              <Desc style={{ color: theme.secondaryMuted }}>
+                Looks pretty barren here... Try adding some competition
+              </Desc>
+            )}
           </CompetitorInnerContainer>
           <ArrowRight
             onClick={() => {
@@ -266,18 +281,22 @@ const Landing = () => {
                         currentVisible = currentEntries[0].isIntersecting
 
                         if (!nextVisible && currentVisible) {
-                          nextChild.scrollIntoView({ behavior: 'smooth' })
+                          nextChild.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'nearest'
+                          })
                         }
 
                         currentObserver.unobserve(currentEntries[0].target)
                       },
-                      { threshold: [1] }
+                      { threshold: [0.8] }
                     )
 
                     currentObserver.observe(child)
                     nextObserver.unobserve(nextEntries[0].target)
                   },
-                  { threshold: [1] }
+                  { threshold: [0.8] }
                 )
 
                 if (nextChild) nextObserver.observe(nextChild)
@@ -297,7 +316,67 @@ const Landing = () => {
         </CompetitorContainer>
       </BlockContainer>
       <BlockHeader>Recents</BlockHeader>
-      <BlockContainer></BlockContainer>
+      <BlockContainer>
+        {userData.userSets?.length > 0 &&
+          userData.userSets.map((set) => {
+            return (
+              <RecentStudyContainer
+                id={set._id}
+                key={uuidv4()}
+                as={Link}
+                to={`/study/sets/view/${set._id}`}>
+                <RecentStudyTitle>{set.title}</RecentStudyTitle>
+                <RecentStudyDescription>
+                  {truncateString(set.description, 180, true)}
+                </RecentStudyDescription>
+
+                {set.isPublic && (
+                  <VoteContainer>
+                    <DownvoteCount>{set.downvotes}</DownvoteCount>
+                    <Downvote
+                      width="18"
+                      height="19"
+                      viewBox="0 0 10 11"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
+                        fill={theme.muted}
+                        stroke={theme.secondaryMuted}
+                        strokeLinecap="round"
+                      />
+                    </Downvote>
+                    <Upvote
+                      width="18"
+                      height="19"
+                      viewBox="0 0 10 11"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
+                        fill={theme.muted}
+                        stroke={theme.secondaryMuted}
+                        strokeLinecap="round"
+                      />
+                    </Upvote>
+                    <UpvoteCount>{set.upvotes}</UpvoteCount>
+                  </VoteContainer>
+                )}
+              </RecentStudyContainer>
+            )
+          })}
+
+        {userData.userSets?.length <= 0 && (
+          <Desc
+            style={{
+              color: theme.secondaryMuted,
+              width: '100%',
+              textAlign: 'center'
+            }}>
+            Looks pretty barren here... Try creating a study set!
+          </Desc>
+        )}
+      </BlockContainer>
     </PageWrapper>
   )
 }
@@ -307,8 +386,6 @@ const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  position: relative;
 `
 
 // No Account
@@ -347,10 +424,14 @@ const StatContainer = styled.div`
 
   height: 12em;
 
-  position: relative;
-
   width: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `
+
+const StatDataContainer = styled.div``
 
 const StatData = styled.p`
   margin: 0.9em;
@@ -358,13 +439,9 @@ const StatData = styled.p`
 `
 
 const StatImage = styled.img`
-  position: absolute;
-  right: 20px;
-  top: 50%;
   height: 7em;
   width: 7em;
   border-radius: 50%;
-  transform: translateY(-50%);
 `
 
 // Charts
@@ -386,8 +463,6 @@ const Arrow = styled.svg`
   height: 100%;
   width: 1em;
 
-  position: absolute;
-  top: 0;
   path {
     stroke: ${(props) => props.theme.inputBackground};
   }
@@ -414,24 +489,31 @@ const CompetitorContainer = styled.div`
   flex-grow: 1;
   min-width: 17em;
   /* max-width: 40em; */
-  
-  padding: 1em 3em;
+
+  padding: 1em;
   border-radius: 15px;
 
   height: 12em;
 
-  position: relative;
-
   width: 20%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
 `
 
 const CompetitorInnerContainer = styled.div`
   overflow: hidden;
   height: 100%;
+  width: 100%;
 
   border-radius: 15px;
 
   display: flex;
+  align-items: center;
+  text-align: center;
+
   gap: 1em;
 `
 
@@ -457,4 +539,69 @@ const CompetitorData = styled.p`
   color: ${(props) => props.theme.tertiaryForeground};
 `
 
+// Recents
+const RecentStudyContainer = styled.div`
+  text-decoration: none;
+  background-color: ${(props) => props.theme.secondaryBackground};
+  flex: 1 1 25%;
+  min-width: 17em;
+  max-width: 25%;
+
+  padding: 1em;
+  border-radius: 15px;
+
+  height: 8em;
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+
+  cursor: pointer;
+  transition: transform 400ms ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+`
+
+const RecentStudyTitle = styled.p`
+  margin: 0;
+  color: ${(props) => props.theme.secondaryForeground};
+`
+
+const RecentStudyDescription = styled.p`
+  margin: 0;
+  text-indent: 1em;
+  color: ${(props) => props.theme.tertiaryForeground};
+`
+
+const VoteContainer = styled.div`
+  display: flex;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+
+  padding: 0.5em 0.75em;
+
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.3em;
+`
+
+const UpvoteCount = styled.p`
+  margin: 0;
+  color: ${(props) => props.theme.secondaryMuted};
+`
+
+const Upvote = styled.svg`
+  transform: rotateX(180deg);
+`
+
+const DownvoteCount = styled.p`
+  margin: 0;
+  color: ${(props) => props.theme.secondaryMuted};
+`
+
+const Downvote = styled.svg``
 export default Landing

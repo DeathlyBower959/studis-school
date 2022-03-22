@@ -19,6 +19,7 @@ export default {
     update: apiURL + '/user/update',
     get: apiURL + '/user/get',
     community: apiURL + '/community',
-    leaderboard: apiURL + '/community/leaderboard'
+    leaderboard: apiURL + '/community/leaderboard',
+    competitors: apiURL + '/community/competitors'
   }
 }
