@@ -26,13 +26,15 @@
         "background": "#282828",
         "secondaryBackground": "#323232",
         "tertiaryBackground": "#3c3c3c",
+        "quaternaryBackground": "#4f4f4f",
         "inputBackground": "#444444",
   
         "muted": "#a0a0a0",
         "secondaryMuted": "#808080",
         "disabledText": "#545454",
   
-        "error": "#ff5252"
+        "error": "#ff5252",
+        "success": "#23c923"
       },
       {
         "themeID": "default_themes.light",
@@ -59,13 +61,15 @@
         "background": "#fafafa",
         "secondaryBackground": "#e6e6e6",
         "tertiaryBackground": "#d2d2d2",
+        "quaternaryBackground": "#b8b8b8",
         "inputBackground": "#bebebe",
   
         "muted": "#545454",
         "secondaryMuted": "#ff0000",
         "disabledText": "#a1a1a1",
   
-        "error": "#ff3333"
+        "error": "#ff3333",
+        "success": "#53c953"
       }
     ]
   }

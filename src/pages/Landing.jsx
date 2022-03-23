@@ -408,7 +408,7 @@ const BlockContainer = styled.div`
 `
 
 const BlockHeader = styled.p`
-  color: white;
+  color: ${(props) => props.theme.foreground};
   font-size: 3em;
   margin-bottom: 0.5em;
 `
@@ -512,6 +512,7 @@ const CompetitorInnerContainer = styled.div`
 
   display: flex;
   align-items: center;
+  justify-content: center;
   text-align: center;
 
   gap: 1em;

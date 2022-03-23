@@ -1,7 +1,7 @@
 import './styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { Routes as ReactRoutes, Route, useNavigate} from 'react-router-dom'
+import { Routes as ReactRoutes, Route, useNavigate } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState, useCallback } from 'react'
@@ -73,14 +73,13 @@ const App = () => {
   // If successfull login, it is an object of all the user data (must manually update)
   const [userData, setUserData] = useState('none')
 
-  
   // Used for automatic login on page refresh etc
   const [localAuth, setLocalAuth] = useLocalStorage('authToken', null)
-  
+
   // Allows navigating the page programatically without user input
   // navigate("/PATH", { replace: true });
   const navigate = useNavigate()
-  
+
   // Choosing Default Themes etc
   const theme =
     defaultThemes.themes[

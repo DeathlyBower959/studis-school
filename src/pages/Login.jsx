@@ -124,7 +124,7 @@ const BoldLink = styled.p`
 const ErrorMessage = styled.p`
   margin-left: 3px;
   margin-top: 3px;
-  color: red;
+  color: ${props => props.theme.error};
   font-size: 14px;
 `
 

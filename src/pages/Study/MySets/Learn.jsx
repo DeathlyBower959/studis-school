@@ -6,7 +6,7 @@ const LearnSet = () => {
 
   return (
     <>
-      <Header>Learning Saved Flash Cards | setId: {setId}</Header>
+      <Header>Learning Sets Flash Cards | setId: {setId}</Header>
     </>
   );
 };
