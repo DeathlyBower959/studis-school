@@ -2,6 +2,7 @@ import styled, { ThemeContext } from 'styled-components'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
+import Spinner from '../atoms/Loaders/Spinner'
 
 // Recharts
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis } from 'recharts'
@@ -17,7 +18,7 @@ import {
 import Form from '../components/Forms/Form'
 
 // API
-import { getCompetitors } from '../api/community'
+import { getCompetitors, getLeaderboard } from '../api/community'
 
 // Contexts
 import Account from '../contexts/AccountContext'
@@ -69,18 +70,35 @@ const data = [
 
 const Landing = () => {
   const navigate = useNavigate()
-  const { userData } = useContext(Account)
+  const { userData, isLoggedIn } = useContext(Account)
   const theme = useContext(ThemeContext)
 
   const [currentCompetitors, setCurrentCompetitors] = useState([])
+  const [currentLeaderboard, setCurrentLeaderboard] = useState([])
 
   useEffect(() => {
-    if (!userData || userData == 'none') return setCurrentCompetitors(null)
+    if (isLoggedIn() === 0 || isLoggedIn() === 2)
+      return setCurrentCompetitors(null)
 
     refreshCompetitors()
+    refreshLeaderboard()
   }, [userData])
 
-  if (!userData || userData == 'none')
+  if (isLoggedIn() === 2)
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '80%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+        <Spinner height="50px" />
+      </div>
+    )
+
+  if (isLoggedIn() === 0)
     return (
       <PageWrapper>
         <br />
@@ -136,8 +154,15 @@ const Landing = () => {
   const refreshCompetitors = async () => {
     if (userData?.competitors?.length === 0) return setCurrentCompetitors([])
     const competitors = await getCompetitors(userData?.competitors)
-    console.log(competitors)
     if (competitors?.data) setCurrentCompetitors(competitors.data)
+  }
+
+  const refreshLeaderboard = async () => {
+    const leaderboard = await getLeaderboard()
+    if (leaderboard?.data) setCurrentLeaderboard({
+      place: leaderboard.data.findIndex(user => user.userId === userData._id) + 1,
+      data: leaderboard.data.find(user => user.userId === userData._id)
+    })
   }
 
   // Means the user has an account
@@ -147,10 +172,10 @@ const Landing = () => {
       <BlockContainer>
         <StatContainer>
           <StatDataContainer>
-            <StatData>Place: 3rd</StatData>
-            <StatData>Exp: 523</StatData>
-            <StatData>prestige: 3</StatData>
-            <StatData>Study Streak: 3</StatData>
+            <StatData>Place: {currentLeaderboard.place}</StatData>
+            <StatData>Exp: {currentLeaderboard.data.exp}</StatData>
+            <StatData>Prestige: {currentLeaderboard.data.prestiges}</StatData>
+            <StatData>Study Streak: PLACEHOLDER</StatData>
           </StatDataContainer>
           <StatImage src={placeholderAvatar} />
         </StatContainer>
@@ -255,6 +280,8 @@ const Landing = () => {
                 Looks pretty barren here... Try adding some competition
               </Desc>
             )}
+
+            {currentCompetitors === null && <Spinner height="3em" />}
           </CompetitorInnerContainer>
           <ArrowRight
             onClick={() => {
@@ -332,7 +359,7 @@ const Landing = () => {
 
                 {set.isPublic && (
                   <VoteContainer>
-                    <DownvoteCount>{set.downvotes}</DownvoteCount>
+                    <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
                     <Downvote
                       width="18"
                       height="19"
@@ -359,7 +386,7 @@ const Landing = () => {
                         strokeLinecap="round"
                       />
                     </Upvote>
-                    <UpvoteCount>{set.upvotes}</UpvoteCount>
+                    <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
               </RecentStudyContainer>
@@ -405,6 +432,8 @@ const BlockContainer = styled.div`
   width: 100%;
   padding: 0 3em;
   flex-wrap: wrap;
+
+  justify-content: center;
 `
 
 const BlockHeader = styled.p`

@@ -37,20 +37,17 @@ import StudyView from './pages/Study/View'
 import StudyMySets from './pages/Study/MySets/MySets'
 import StudyMySetsEdit from './pages/Study/MySets/Edit'
 import StudyMySetsFlash from './pages/Study/MySets/Flash'
-import StudyMySetsLearn from './pages/Study/MySets/Learn'
 import StudyMySetsTest from './pages/Study/MySets/Test'
 import StudyMySetsView from './pages/Study/MySets/View'
 // SavedSets
 import StudySavedSets from './pages/Study/SavedSets/SavedSets'
 import StudySavedSetsEdit from './pages/Study/SavedSets/Edit'
 import StudySavedSetsFlash from './pages/Study/SavedSets/Flash'
-import StudySavedSetsetsLearn from './pages/Study/SavedSets/Learn'
 import StudySavedSetsTest from './pages/Study/SavedSets/Test'
 import StudySavedSetsView from './pages/Study/SavedSets/View'
 // Words
 import Words from './pages/Words/Words'
 import WordsNew from './pages/Words/New'
-import WordsView from './pages/Words/View'
 import WordsEdit from './pages/Words/Edit'
 
 // Contexts
@@ -253,6 +250,8 @@ const App = () => {
 
   useEffect(() => {
     AuthLogin()
+
+    SendToast('App is not polished, so please don\'t use real information!', 'info')
   }, [])
 
   // 0 = Not Logged In
@@ -266,126 +265,129 @@ const App = () => {
   }, [userData])
 
   return (
-    <ThemeProvider theme={theme}>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable
-        pauseOnHover
-      />
-      <ToastNotifContext.Provider value={SendToast}>
-        <AccountContext.Provider
-          value={{
-            localAuth,
-            setLocalAuth,
-            AuthLogin,
-            AuthLogout,
-            userData,
-            setUserData,
-            isLoggedIn
-          }}>
-          <Navbar />
-          <ReactRoutes>
-            <Route path="*" element={<PageNotFound />} />
+    <>
+      <ThemeProvider theme={theme}>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+        />
+        <ToastNotifContext.Provider value={SendToast}>
+          <AccountContext.Provider
+            value={{
+              localAuth,
+              setLocalAuth,
+              AuthLogin,
+              AuthLogout,
+              userData,
+              setUserData,
+              isLoggedIn
+            }}>
+            <Navbar />
+            <ReactRoutes>
+              <Route path="*" element={<PageNotFound />} />
 
-            <Route path="/" element={<Landing />} />
-            <Route path="/about" element={<About />} />
+              <Route path="/" element={<Landing />} />
+              <Route path="/about" element={<About />} />
 
-            {/* MUST BE LOGGED OUT */}
-            <Route element={<Routes.NoAccount />}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-            </Route>
-
-            {/* MUST BE LOGGED IN */}
-            <Route element={<Routes.RequireAuth />}>
-              <Route path="/settings" element={<Settings />} />
-              {/* Study */}
-              <Route path="/study" element={<Study />} />
-
-              <Route path="/study/new" element={<StudyNew />} />
-              <Route path="/study/view" element={<StudyView />} />
-
-              <Route path="/study/saved" element={<StudySavedSets />} />
-              <Route path="/study/sets" element={<StudyMySets />} />
-
+              <Route path="/community/leaderboard" element={<CommunityLeaders />} />
               <Route
-                path="/study/saved/edit/:setId"
-                element={<StudySavedSetsEdit />}
-              />
-              <Route
-                path="/study/sets/edit/:setId"
-                element={<StudyMySetsEdit />}
-              />
-
-              <Route
-                path="/study/saved/view/:setId"
-                element={<StudySavedSetsView />}
-              />
-              <Route
-                path="/study/sets/view/:setId"
-                element={<StudyMySetsView />}
-              />
-
-              <Route
-                path="/study/saved/flash/:setId"
-                element={<StudySavedSetsFlash />}
-              />
-              <Route
-                path="/study/sets/flash/:setId"
-                element={<StudyMySetsFlash />}
-              />
-
-              <Route
-                path="/study/saved/test/:setId"
-                element={<StudySavedSetsTest />}
-              />
-              <Route
-                path="/study/sets/test/:setId"
-                element={<StudyMySetsTest />}
-              />
-
-              <Route
-                path="/study/saved/learn/:setId"
-                element={<StudySavedSetsetsLearn />}
-              />
-              <Route
-                path="/study/sets/learn/:setId"
-                element={<StudyMySetsLearn />}
-              />
-
-              {/* Dictionary (Saved Words) */}
-              <Route path="/words" element={<Words />} />
-              <Route path="/words/new" element={<WordsNew />} />
-              <Route path="/words/view/:wordId" element={<WordsView />} />
-              <Route path="/words/edit/:wordId" element={<WordsEdit />} />
-
-              {/* Community */}
-              <Route path="/community" element={<Community />} />
-              <Route path="/community/leaders" element={<CommunityLeaders />} />
-              <Route
-                path="/community/:userId"
+                path="/community/user/:userId"
                 element={<CommunityUserProfile />}
               />
-              <Route
-                path="/community/:userId/sets/:setId"
-                element={<CommunityUserSet />}
-              />
-              <Route
-                path="/community/:userId/words/:wordId"
-                element={<CommunityUserWord />}
-              />
-            </Route>
-          </ReactRoutes>
-          <WebsiteBackground />
-        </AccountContext.Provider>
-      </ToastNotifContext.Provider>
-    </ThemeProvider>
+
+              {/* MUST BE LOGGED OUT */}
+              <Route element={<Routes.NoAccount />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+              </Route>
+
+              {/* MUST BE LOGGED IN */}
+              <Route element={<Routes.RequireAuth />}>
+                <Route path="/settings" element={<Settings />} />
+                {/* Study */}
+                <Route path="/study" element={<Study />} />
+
+                <Route path="/study/new" element={<StudyNew />} />
+                <Route path="/study/view" element={<StudyView />} />
+
+                <Route path="/study/saved" element={<StudySavedSets />} />
+                <Route path="/study/sets" element={<StudyMySets />} />
+
+                <Route
+                  path="/study/saved/edit/:setId"
+                  element={<StudySavedSetsEdit />}
+                />
+                <Route
+                  path="/study/sets/edit/:setId"
+                  element={<StudyMySetsEdit />}
+                />
+
+                <Route
+                  path="/study/saved/view/:setId"
+                  element={<StudySavedSetsView />}
+                />
+                <Route
+                  path="/study/sets/view/:setId"
+                  element={<StudyMySetsView />}
+                />
+
+                <Route
+                  path="/study/saved/flash/:setId"
+                  element={<StudySavedSetsFlash />}
+                />
+                <Route
+                  path="/study/sets/flash/:setId"
+                  element={<StudyMySetsFlash />}
+                />
+
+                <Route
+                  path="/study/saved/test/:setId"
+                  element={<StudySavedSetsTest />}
+                />
+                <Route
+                  path="/study/sets/test/:setId"
+                  element={<StudyMySetsTest />}
+                />
+
+                {/* <Route
+                  path="/study/saved/learn/:setId"
+                  element={<StudySavedSetsetsLearn />}
+                />
+                <Route
+                  path="/study/sets/learn/:setId"
+                  element={<StudyMySetsLearn />}
+                /> */}
+
+                {/* Dictionary (Saved Words) */}
+                <Route path="/words" element={<Words />} />
+                <Route path="/words/new" element={<WordsNew />} />
+                <Route path="/words/edit/:wordId" element={<WordsEdit />} />
+
+                {/* Community */}
+                <Route path="/community" element={<Community />} />
+                {/* Some routes for community are un authed */}
+                <Route
+                  path="/community/:userId/sets/:setId"
+                  element={<CommunityUserSet />}
+                />
+                <Route
+                  path="/community/:userId/words/:wordId"
+                  element={<CommunityUserWord />}
+                />
+              </Route>
+            </ReactRoutes>
+            <WebsiteBackground />
+          </AccountContext.Provider>
+        </ToastNotifContext.Provider>
+      </ThemeProvider>
+    </>
   )
 }
 

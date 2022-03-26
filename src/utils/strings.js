@@ -9,6 +9,7 @@ export const addNumberSuffix = (n) =>
     : 'th')
 
 export const truncateString = (str, n, useWordBoundary) => {
+  if (!str || str.trim().length == 0) return str
   if (str.length <= n) {
     return str
   }

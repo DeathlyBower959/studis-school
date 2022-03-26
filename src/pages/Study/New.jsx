@@ -1,5 +1,5 @@
 import styled, { ThemeContext } from 'styled-components'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Form from '../../components/Forms/Form'
 import { useContext, useState } from 'react'
 import { Trash2, PlusCircle } from 'react-feather'
@@ -9,6 +9,7 @@ import { createSet } from '../../api/user'
 import validate from '../../validations/CreateSet'
 import ToastNotif from '../../contexts/ToastNotifContext'
 import Account from '../../contexts/AccountContext'
+import { MOBILE } from '../../constants/sizes'
 
 function CreateStudy() {
   const { localAuth, setUserData } = useContext(Account)
@@ -212,11 +213,25 @@ function CreateStudy() {
           )}
           {values.terms?.length <= 0 && <Divider />}
         </TermContainer>
-        <CreateButton>Create</CreateButton>
+        <ButtonContainer>
+          <Link to="/study">
+            <SubmitButton type="button" secondary>
+              Cancel
+            </SubmitButton>
+          </Link>
+          <SubmitButton>Create</SubmitButton>
+        </ButtonContainer>
       </FormContainer>
     </>
   )
 }
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+`
 
 const Header = styled.p`
   color: ${(props) => props.theme.foreground};
@@ -263,7 +278,7 @@ const Divider = styled.hr`
   background-color: ${(props) => props.theme.secondaryBackground};
 `
 
-const CreateButton = styled(Form.Button)``
+const SubmitButton = styled(Form.Button)``
 
 const TermContainer = styled.div`
   display: flex;
@@ -272,7 +287,7 @@ const TermContainer = styled.div`
   max-width: 500px;
   gap: 0.5em;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.studyCreate}) {
     width: 80%;
   }
 `
@@ -299,12 +314,14 @@ const Term = styled.p`
   margin: 0;
   text-indent: 1em;
   color: ${(props) => props.theme.tertiaryForeground};
+  overflow-wrap: break-word;
 `
 
 const TermDef = styled.p`
   margin: 0;
   text-indent: 1em;
   color: ${(props) => props.theme.tertiaryForeground};
+  overflow-wrap: break-word;
 `
 
 const TermInput = styled(Input)`

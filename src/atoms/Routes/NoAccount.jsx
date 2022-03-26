@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Navigate, Outlet, useLocation} from 'react-router-dom'
 import AccountContext from '../../contexts/AccountContext'
 
-const RequireAuth = () => {
+const NoAuth = () => {
   const { isLoggedIn } = useContext(AccountContext)
   const {state} = useLocation()
 
@@ -13,4 +13,4 @@ const RequireAuth = () => {
   return <Outlet />
 }
 
-export default RequireAuth
+export default NoAuth

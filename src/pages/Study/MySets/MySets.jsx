@@ -24,12 +24,12 @@ const MySets = () => {
                 to={`/study/sets/view/${set._id}`}>
                 <RecentStudyTitle>{set.title}</RecentStudyTitle>
                 <RecentStudyDescription>
-                  {truncateString(set.description, 180, true)}
+                  {truncateString(set.description, 75, false)}
                 </RecentStudyDescription>
 
                 {set.isPublic && (
                   <VoteContainer>
-                    <DownvoteCount>{set.downvotes}</DownvoteCount>
+                    <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
                     <Downvote
                       width="18"
                       height="19"
@@ -56,7 +56,7 @@ const MySets = () => {
                         strokeLinecap="round"
                       />
                     </Upvote>
-                    <UpvoteCount>{set.upvotes}</UpvoteCount>
+                    <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
               </SetContainer>
@@ -67,7 +67,7 @@ const MySets = () => {
           <MissingContainer>
             <Desc
               style={{
-                color: theme.secondaryMuted,
+                color: theme.secondaryMuted
               }}>
               Looks pretty barren here... Try creating a study set!
             </Desc>
@@ -87,6 +87,8 @@ const BlockContainer = styled.div`
   width: 100%;
   padding: 0 3em;
   flex-wrap: wrap;
+
+  justify-content: center;
 `
 
 const Header = styled.p`
@@ -106,13 +108,12 @@ const MissingContainer = styled.div`
   align-items: center;
 `
 
-
 const SetContainer = styled.div`
   text-decoration: none;
   background-color: ${(props) => props.theme.secondaryBackground};
   flex: 1 1 25%;
   min-width: 17em;
-  /* max-width: 25%; */
+  max-width: 25%;
 
   padding: 1em;
   border-radius: 15px;

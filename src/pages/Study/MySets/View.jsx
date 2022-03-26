@@ -1,54 +1,62 @@
-import styled from 'styled-components'
-import { Link, useParams } from 'react-router-dom'
-import { useContext, useState, useRef } from 'react'
+import styled, { ThemeContext } from 'styled-components'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useContext, useState } from 'react'
 import Account from '../../../contexts/AccountContext'
-import Spinner from '../../../atoms/Loaders/Spinner'
 import { Globe, Lock, ChevronDown } from 'react-feather'
+import { MOBILE } from '../../../constants/sizes'
+import { calculateDate } from '../../../utils/time'
+import { deleteSet } from '../../../api/user'
+import ToastNotif from '../../../contexts/ToastNotifContext'
 
 const ViewSet = () => {
-  const { userData } = useContext(Account)
   const { setId } = useParams()
 
+  const { userData, localAuth, setUserData } = useContext(Account)
+  const theme = useContext(ThemeContext)
+  const SendToast = useContext(ToastNotif)
+
+  const navigate = useNavigate()
+
   const [isNavOpen, setIsNavOpen] = useState(true)
-  const divRef = useRef()
 
-  const data = userData?.userSets?.find((set) => set._id == setId)
+  const dataIndex = userData?.userSets?.findIndex((set) => set._id === setId)
 
-  const calculateDate = (date, showAgo = true) => {
-    var seconds = Math.floor((new Date() - date) / 1000)
-
-    var interval = seconds / 31536000
-
-    if (interval > 1) {
-      return date.toLocaleDateString()
-    }
-    interval = seconds / 2592000
-    if (interval > 1) {
-      return date.toLocaleDateString()
-    }
-    interval = seconds / 86400
-    if (interval > 1 && interval < 7) {
-      return Math.floor(interval) + ' days' + (showAgo ? ' ago' : '')
-    } else if (interval > 1) {
-      return date.toLocaleDateString()
-    }
-    interval = seconds / 3600
-    if (interval > 1) {
-      return Math.floor(interval) + ' hours' + (showAgo ? ' ago' : '')
-    }
-    interval = seconds / 60
-    if (interval > 1) {
-      return Math.floor(interval) + ' minutes' + (showAgo ? ' ago' : '')
-    }
-    return Math.floor(seconds) + ' seconds' + (showAgo ? ' ago' : '')
-  }
-
-  if (!data)
+  if (dataIndex < 0)
     return (
-      <SpinnerWrapper>
-        <Spinner height="50px" />
-      </SpinnerWrapper>
+      <>
+        <Header>Not Found</Header>
+        <Description>
+          I tried to find this set, but it doesn't seem to exist in your
+          account!
+        </Description>
+      </>
     )
+
+  const data = userData.userSets[dataIndex]
+
+  const DeleteSet = () => {
+    if (window.confirm('Are you sure you want to delete this set?')) {
+      const DeleteSetPromise = new Promise(async (resolve, reject) => {
+        const deleteResult = await deleteSet(localAuth, setId)
+
+        if (!deleteResult?.data?.newUser) return reject(deleteResult.data)
+
+        setUserData(deleteResult.data.newUser)
+        navigate('/study/sets')
+        resolve(deleteResult.data.newUser)
+      })
+
+      SendToast(
+        {
+          promise: DeleteSetPromise,
+          pending: 'Deleting set...',
+          error: 'Failed to delete set!',
+          success: 'Successfully deleted set!'
+        },
+        'promise'
+      )
+    }
+  }
 
   return (
     <>
@@ -63,6 +71,7 @@ const ViewSet = () => {
             {data.isPublic ? 'Public' : 'Private'}
           </PrivacyStatus>
         </PrivacyStatusWrapper>
+
         <FloatingDivider />
 
         <Link
@@ -70,12 +79,9 @@ const ViewSet = () => {
           style={{ textDecoration: 'none' }}>
           <StudyModeButton>Edit</StudyModeButton>
         </Link>
+
         <FloatingDivider />
-        <Link
-          to={`/study/sets/learn/${data._id}`}
-          style={{ textDecoration: 'none' }}>
-          <StudyModeButton>Learn</StudyModeButton>
-        </Link>
+
         <Link
           to={`/study/sets/flash/${data._id}`}
           style={{ textDecoration: 'none' }}>
@@ -86,13 +92,19 @@ const ViewSet = () => {
           style={{ textDecoration: 'none' }}>
           <StudyModeButton>Test</StudyModeButton>
         </Link>
+
+        <FloatingDivider />
+        <StudyModeButton style={{ color: theme.error }} onClick={DeleteSet}>
+          Delete
+        </StudyModeButton>
+
         <CreatedDate>{calculateDate(new Date(data.createdAt))}</CreatedDate>
         <MinimizeArrow
           onClick={() => setIsNavOpen((prev) => !prev)}
           $isOpen={isNavOpen}
         />
       </FloatingWrapper>
-
+      
       <TermContainer>
         {data.terms?.map((term) => {
           return (
@@ -107,8 +119,6 @@ const ViewSet = () => {
   )
 }
 
-// REMEMBER TO ADD MOBILE SUPPORT FOR MOBILE WRAPPER
-
 // Floating Navbar
 const FloatingWrapper = styled.div`
   position: fixed;
@@ -122,7 +132,17 @@ const FloatingWrapper = styled.div`
 
   transition: max-height 1s ease-in-out;
 
-  max-height: ${(props) => (props.$isOpen ? '20em' : '1.5em')};
+  max-height: ${(props) => (props.$isOpen ? '24em' : '1.5em')};
+  
+  @media only screen and (max-width: ${MOBILE.viewSet}) {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin: 1em auto;
+    max-width: 15em;
+  }
+
+  z-index: 0;
 `
 
 const PrivacyStatusWrapper = styled.div`
@@ -230,7 +250,7 @@ const Description = styled.p`
 
 const TermContainer = styled.div`
   width: 80%;
-  max-width: 800px;
+  max-width: 600px;
 
   margin: 0 auto;
   display: flex;
@@ -238,6 +258,9 @@ const TermContainer = styled.div`
   gap: 0.5em;
 
   margin-top: 2em;
+  @media only screen and (max-width: ${MOBILE.viewSet}) {
+    margin-top: 0;
+  }
 `
 
 const TermWrapper = styled.div`

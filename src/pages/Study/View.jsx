@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Form from '../../components/Forms/Form'
+import { MOBILE } from '../../constants/sizes'
 
 function Study() {
   return (
@@ -40,7 +41,7 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.studyDivider}) {
     justify-content: center;
     flex-direction: column;
     height: 50%;
@@ -75,7 +76,7 @@ const Divider = styled.div`
   background-color: ${(props) => props.theme.tertiaryBackground};
   height: 70vh;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.studyDivider}) {
     width: 80vw;
     height: 2px;
 

@@ -339,7 +339,7 @@ export const updateWord = async (token, wordId, newWord) => {
 
   try {
     const res = await Axios.put(settings.ROUTES.update, {
-      savedSets: {
+      savedWords: {
         wordId,
         ...newWord
       }
@@ -375,7 +375,7 @@ export const deleteWord = async (token, wordId) => {
 
   try {
     const res = await Axios.put(settings.ROUTES.update, {
-      savedSets: {
+      savedWords: {
         wordId
       }
     }, {

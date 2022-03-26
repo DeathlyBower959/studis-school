@@ -2,10 +2,11 @@ import Axios from 'axios'
 import settings from '../constants/devSettings'
 import { isProvided } from '../utils/api'
 
-export const getCommunity = async (userId = null) => {
+export const getCommunity = async (currentUserId= null,userId = null) => {
   try {
     const res = await Axios.get(settings.ROUTES.community, {
       params: {
+        currentUserId,
         userId
       }
     })

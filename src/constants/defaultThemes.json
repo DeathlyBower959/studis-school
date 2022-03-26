@@ -21,7 +21,7 @@
         "tertiaryForeground": "#b0b0b0",
   
         "accent": "#4e6bf6",
-        "secondaryAccent": "#0030ff",
+        "secondaryAccent": "#1c3085",
   
         "background": "#282828",
         "secondaryBackground": "#323232",
@@ -70,6 +70,42 @@
   
         "error": "#ff3333",
         "success": "#53c953"
+      },
+      {
+        "themeID": "themes.forest",
+        "name": "Woodland",
+  
+        "navbar": {
+          "background": "#292d29",
+          "foreground": "#788278",
+          "outline": "#2f332f"
+        },
+  
+        "alert": {
+          "color": "#ffafb5",
+          "background": "#5f3235",
+          "border": "#764548"
+        },
+  
+        "foreground": "#fff",
+        "secondaryForeground": "#d4d4d4",
+        "tertiaryForeground": "#b0b0b0",
+  
+        "accent": "#50b352",
+        "secondaryAccent": "#156b3a",
+  
+        "background": "#262926",
+        "secondaryBackground": "#2b302b",
+        "tertiaryBackground": "#364036",
+        "quaternaryBackground": "#434f43",
+        "inputBackground": "#3a423a",
+  
+        "muted": "#94a195",
+        "secondaryMuted": "#7a8279",
+        "disabledText": "#4e544f",
+  
+        "error": "#ff5252",
+        "success": "#23c923"
       }
     ]
   }

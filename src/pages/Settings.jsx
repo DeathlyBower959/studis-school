@@ -13,9 +13,10 @@ import Account from '../contexts/AccountContext'
 import ToastNotif from '../contexts/ToastNotifContext'
 
 // API
-import { updateUser, login } from '../api/user'
+import { updateUser, login, deleteUser } from '../api/user'
 import validatePassword from '../utils/validatePassword'
 import Spinner from '../atoms/Loaders/Spinner'
+import { MOBILE } from '../constants/sizes'
 
 const Settings = () => {
   const { userData, localAuth, setUserData, AuthLogout } = useContext(Account)
@@ -54,7 +55,7 @@ const Settings = () => {
     })
   }
 
-  const saveUserSettings = () => {
+  const SaveUserSettings = () => {
     const SaveUserDataPromise = new Promise(async (resolve, reject) => {
       const {
         email,
@@ -186,6 +187,71 @@ const Settings = () => {
     })
   }
 
+  const DeleteAccount = async () => {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete your account, and all of its data?'
+      )
+    )
+      return
+
+    if (newData?.deleteAccPassConfirm?.trim()) {
+      const isPasswordValid = validatePassword(newData.deleteAccPassConfirm)
+      if (isPasswordValid === true) {
+        const loginResult = await login(
+          userData.email,
+          newData.deleteAccPassConfirm
+        )
+        if (loginResult.status === 200) {
+          const DeleteAccountPromise = new Promise(async (resolve, reject) => {
+            const deleteResult = await deleteUser(localAuth)
+            if (deleteResult.status !== 200) {
+              return reject(deleteResult.data)
+            }
+
+            resolve()
+            AuthLogout()
+          })
+
+          SendToast(
+            {
+              promise: DeleteAccountPromise,
+              pending: 'Deleting account...',
+              error: 'Failed to delete account!',
+              success: 'Successfully deleted account!'
+            },
+            'promise'
+          )
+        } else {
+          // Incorrect Password
+          setNewData((prev) => {
+            return { ...prev, deleteAccPassConfirm: null }
+          })
+          setErrors((prev) => {
+            return { ...prev, deleteAccPassConfirm: 'Incorrect password!' }
+          })
+        }
+      } else {
+        setNewData((prev) => {
+          return { ...prev, deleteAccPassConfirm: null }
+        })
+        setErrors((prev) => {
+          return {
+            ...prev,
+            deleteAccPassConfirm: isPasswordValid
+          }
+        })
+      }
+    } else {
+      setErrors((prev) => {
+        return {
+          ...prev,
+          deleteAccPassConfirm: 'Please enter your password!'
+        }
+      })
+    }
+  }
+
   return (
     <SpacerDiv>
       <SettingsHeader>Settings</SettingsHeader>
@@ -203,7 +269,7 @@ const Settings = () => {
         </Sidebar>
         {selectedPage === 'settings.loading' && (
           <SettingsWindow>
-            <Spinner height='50px'/>
+            <Spinner height="3em" />
             {newData?._id && setSelectedPage('settings.account')}
           </SettingsWindow>
         )}
@@ -229,7 +295,7 @@ const Settings = () => {
             </InputGroup>
             <br />
             <InputGroup>
-              <UpdateButton onClick={saveUserSettings}>Save</UpdateButton>
+              <UpdateButton onClick={SaveUserSettings}>Save</UpdateButton>
             </InputGroup>
             <br />
             <SettingDivider />
@@ -266,7 +332,7 @@ const Settings = () => {
               </ThemeChooser>
               <br />
               <InputGroup>
-                <UpdateButton onClick={saveUserSettings}>Save</UpdateButton>
+                <UpdateButton onClick={SaveUserSettings}>Save</UpdateButton>
               </InputGroup>
             </InputGroup>
           </SettingsWindow>
@@ -311,8 +377,28 @@ const Settings = () => {
             </InputGroup>
             <br />
             <InputGroup>
-              <UpdateButton onClick={saveUserSettings}>Save</UpdateButton>
+              <UpdateButton onClick={SaveUserSettings}>Save</UpdateButton>
             </InputGroup>
+            <br />
+            <SettingHeader>Delete Account</SettingHeader>
+            <SettingDivider />
+            <InputGroup>
+              <SettingTitle>Password</SettingTitle>
+              <SettingTextbox
+                name="deleteAccPassConfirm"
+                type="password"
+                onChange={handleTextboxChange}
+                value={newData?.deleteAccPassConfirm || ''}
+              />
+              {errors.deleteAccPassConfirm && (
+                <ErrorMessage>{errors.deleteAccPassConfirm}</ErrorMessage>
+              )}
+            </InputGroup>
+            {!errors.deleteAccPassConfirm && <br />}
+            <InputGroup>
+              <UpdateButton onClick={DeleteAccount}>Delete</UpdateButton>
+            </InputGroup>
+            <br />
           </SettingsWindow>
         )}
       </ContentWrapper>
@@ -325,7 +411,7 @@ const SpacerDiv = styled.div`
   max-width: 1000px;
   width: 80%;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.settings}) {
     max-width: auto;
     width: 90%;
   }

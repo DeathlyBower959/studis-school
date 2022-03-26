@@ -4,7 +4,7 @@ const prodURL = 'https://studis-server-deathlybower959.vercel.app'
 // Uses development server (Only for ben, as he has access to the server)
 const devServer = false
 
-// Turns the app into developer mode, so it logs more verbose messages
+// Turns the app into developer mode, so it logs more verbose messages (Not used yet)
 const DEV_MODE = false
 
 const apiURL = devServer ? devURL : prodURL

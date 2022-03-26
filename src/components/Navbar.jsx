@@ -9,9 +9,11 @@ import Link from '../atoms/Navbar/Link'
 import Account from '../contexts/AccountContext'
 import Dropdown from '../atoms/Navbar/Dropdown'
 import DropdownLink from '../atoms/Navbar/DropdownLink'
+import { MOBILE } from '../constants/sizes'
+import { truncateString } from '../utils/strings'
 
 const Navbar = () => {
-  const { isLoggedIn, AuthLogout } = useContext(Account)
+  const { isLoggedIn, userData, AuthLogout } = useContext(Account)
   const theme = useContext(ThemeContext)
 
   const userLoggedInState = isLoggedIn()
@@ -23,6 +25,7 @@ const Navbar = () => {
 
   return (
     <>
+    <NavSpacer/>
       <NavWrapper $isNavShown={isNavShown} className="noSelect">
         <LeftDiv>
           <AppLogo tabIndex="-1" to="/">
@@ -33,7 +36,7 @@ const Navbar = () => {
           {/* MODIFY URLS HERE */}
           {/* <NavLink text="NAME" url="/URL" /> */}
           <NavLink onClick={hideNav} text="Study" url="/study" />
-          <NavLink onClick={hideNav} text="My Words" url="/words" />
+          <NavLink onClick={hideNav} text="Dictionary" url="/words" />
           <NavLink onClick={hideNav} text="Community" url="/community" />
           <NavLink onClick={hideNav} text="About" url="/about" />
         </LeftDiv>
@@ -47,7 +50,7 @@ const Navbar = () => {
           )}
           {userLoggedInState === 1 && (
             <>
-              <Dropdown tb="0" title="Account">
+              <Dropdown tb="0" title={truncateString(userData.name || 'Account', 20)}>
                 <DropdownLink
                   onClick={hideNav}
                   text="Settings"
@@ -61,14 +64,13 @@ const Navbar = () => {
                   }}
                   text="Log Out"
                 />
-                {/* <DropdownLink onClick={hideNav} text="Log Out" url="/" /> */}
               </Dropdown>
             </>
           )}
           {userLoggedInState === 2 && (
-            <>
-              <Spinner height="auto" />
-            </>
+            <SpinnerWrapper>
+              <Spinner height="2em" />
+            </SpinnerWrapper>
           )}
         </RightDiv>
         <MobileAppLogo tabIndex="-1" to="/" onClick={hideNav}>
@@ -105,6 +107,17 @@ const Navbar = () => {
   )
 }
 
+const SpinnerWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const NavSpacer = styled.div`
+  width: 100%;
+  height: 3.5rem;
+`
+
 const HamburgerWrapper = styled.div`
   pointer-events: all;
 `
@@ -125,7 +138,7 @@ const AppLogo = styled(ReactLink)`
   text-decoration: none;
 
   display: block;
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     display: ${(props) => (props.$alwaysShow ? 'block' : 'none')};
   }
 `
@@ -152,7 +165,7 @@ const MobileAppLogo = styled(ReactLink)`
   text-decoration: none;
 
   display: none;
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
   }
 `
@@ -172,21 +185,23 @@ const MobileNavBackground = styled.div`
   height: 3.5rem;
 
   padding: 0.5rem 0.3rem 0.5rem 0.5rem;
+  z-index: 9999;
 
   background-color: ${(props) => props.theme.navbar.background};
   justify-content: space-between;
   align-items: center;
 
   display: none;
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
   }
 `
 
 const MobileNavWrapper = styled.div`
-  position: sticky;
+  position: fixed;
   left: 0;
   top: 0;
+  right: 0;
   height: 3.5rem;
 
   padding: 0.5rem 0.3rem 0.5rem 0.5rem;
@@ -199,7 +214,7 @@ const MobileNavWrapper = styled.div`
   align-items: center;
 
   display: none;
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     display: flex;
   }
 `
@@ -207,7 +222,7 @@ const MobileNavWrapper = styled.div`
 const NavLink = styled(Link)`
   user-select: none;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     margin: 0.5em;
   }
 `
@@ -215,7 +230,7 @@ const NavLink = styled(Link)`
 const LeftDiv = styled.div`
   display: flex;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     flex-direction: column;
     margin-bottom: 0.5em;
   }
@@ -224,7 +239,7 @@ const LeftDiv = styled.div`
 const Separator = styled.hr`
   display: none;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
   }
@@ -233,16 +248,16 @@ const Separator = styled.hr`
 const RightDiv = styled.div`
   display: flex;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     flex-direction: column;
     margin-top: 0.5em;
   }
 `
 
 const NavWrapper = styled.div`
-  position: sticky;
-  left: 0;
+  position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   height: 3.5rem;
 
@@ -254,10 +269,10 @@ const NavWrapper = styled.div`
   justify-content: space-between;
   padding: 0.5rem;
 
-  transition: left 600ms ease-in-out;
-  ${(props) => (props.$isNavShown ? 'left: 0;' : 'left: -100vw;')}
-
-  @media only screen and (max-width: 650px) {
+  
+  @media only screen and (max-width: ${MOBILE.navbar}) {
+    transition: left 600ms ease-in-out;
+    ${(props) => (props.$isNavShown ? 'left: 0;' : 'left: -100vw;')}
     display: block;
     position: fixed;
     align-items: center;

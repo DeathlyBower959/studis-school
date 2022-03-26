@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Form from '../../components/Forms/Form'
+import { MOBILE } from '../../constants/sizes'
 
 function Study() {
   return (
@@ -8,7 +9,7 @@ function Study() {
       <Header>Study</Header>
       <Container>
         <SectionWrapper>
-        <Link to="/study/new">
+          <Link to="/study/new">
             <SectionButton secondary>Create</SectionButton>
           </Link>
           <SectionDesc>Want to create a new study set?</SectionDesc>
@@ -18,7 +19,9 @@ function Study() {
           <Link to="/study/view">
             <SectionButton secondary>Practice</SectionButton>
           </Link>
-          <SectionDesc>Need to practice a set for an upcoming test?</SectionDesc>
+          <SectionDesc>
+            Need to practice a set for an upcoming test?
+          </SectionDesc>
         </SectionWrapper>
       </Container>
     </>
@@ -39,8 +42,8 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  
-  @media only screen and (max-width: 650px) {
+
+  @media only screen and (max-width: ${MOBILE.studyDivider}) {
     justify-content: center;
     flex-direction: column;
     height: 50%;
@@ -75,7 +78,7 @@ const Divider = styled.div`
   background-color: ${(props) => props.theme.tertiaryBackground};
   height: 70vh;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.studyDivider}) {
     width: 80vw;
     height: 2px;
 

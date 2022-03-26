@@ -4,6 +4,8 @@ import { useState } from 'react'
 export const CardContainer = ({ children, ...props }) => {
   const [isCardFlipped, setIsCardFlipped] = useState(0)
 
+  console.log(isCardFlipped)
+
   return (
     <StyledCardContainer {...props}>
       {children.map((child, index) => {
@@ -14,14 +16,14 @@ export const CardContainer = ({ children, ...props }) => {
             $isEnd={children.length - 1 === index}
             offset={index === 0 ? null : children.length - index}
             isCardFlipped={
-              index === 0 ? null : isCardFlipped > children.length - index
+              index === 0 ? null : isCardFlipped > children.length - index - 1
             }
             onClick={
               index === 0
                 ? null
                 : () => {
                     setIsCardFlipped((prev) => {
-                      if (prev > children.length - index) return prev - 1
+                      if (prev > children.length - index - 1) return prev - 1
                       else return prev + 1
                     })
                   }

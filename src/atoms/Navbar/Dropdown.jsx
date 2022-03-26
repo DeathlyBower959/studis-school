@@ -1,7 +1,8 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 import { ChevronDown } from 'react-feather'
+import { MOBILE } from '../../constants/sizes'
 
 const Dropdown = ({ children, title, img, tb }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -58,7 +59,7 @@ const ContentWrapper = styled.div`
 `
 
 const ChildWrapper = styled.div`
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     padding-top: ${(props) => (props.index === 0 ? '0.5em' : '0')};
   }
 `
@@ -80,7 +81,7 @@ const DropdownWrapper = styled.div`
   opacity: ${(props) => (props.$isDropdownOpen ? '1' : '0')};
   margin-top: ${(props) => (props.$isDropdownOpen ? '0' : '-2em')};
   z-index: -1;
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.navbar}) {
     left: 0;
     margin-top: ${(props) => (props.$isDropdownOpen ? '0' : '-3em')};
     padding-top: 0;

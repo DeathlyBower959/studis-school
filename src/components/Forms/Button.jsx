@@ -4,7 +4,7 @@ import styled from 'styled-components'
 const InputButton = styled.button`
   padding: 0.7em 2em;
   color: ${(props) => props.theme.foreground};
-  font-size: clamp(12px, 4vw, 15px);
+  font-size: clamp(12px, 4vw, 1em);
   /* font-weight: 600; */
   border: none;
   border-radius: 100px 100px 100px 100px;
@@ -15,6 +15,8 @@ const InputButton = styled.button`
   background: ${(props) =>
     props.secondary
       ? `${props.theme.inputBackground}`
+      : props.error
+      ? props.theme.error
       : `linear-gradient(
         58deg,
         ${props.theme.accent} 20%,
