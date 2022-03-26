@@ -4,12 +4,6 @@ A web app that manages your assignments, due dates, and helps you study!
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/d8e24864-2434-4ee6-8135-983941cb428e/deploy-status)](https://app.netlify.com/sites/studis/deploys)
 
-## Project Status
-
-```bash
-3-1-2022: Starting...
-```
-
 ## Installation and Setup Instructions
 
 You must have node and npm installed locally on your system.
