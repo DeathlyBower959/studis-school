@@ -12,6 +12,8 @@ import DropdownLink from '../atoms/Navbar/DropdownLink'
 import { MOBILE } from '../constants/sizes'
 import useProfilePicture from '../hooks/useProfilePicture'
 
+import AppLogo2 from '../assets/svg/Logo'
+
 const Navbar = () => {
   const { isLoggedIn, userData, AuthLogout } = useContext(Account)
   const theme = useContext(ThemeContext)
@@ -81,7 +83,7 @@ const Navbar = () => {
           )}
         </RightDiv>
         <MobileAppLogo tabIndex="-1" to="/" onClick={hideNav}>
-          Studis
+          <AppLogo2/>
         </MobileAppLogo>
       </NavWrapper>
       <MobileNavBackground />
@@ -130,18 +132,13 @@ const AppLogo = styled(ReactLink)`
   font-size: 2em;
   transition: margin-left 600ms ease-in-out;
   pointer-events: all;
-
   user-select: none;
-
-  margin: 0;
-
   color: ${(props) => props.theme.accent};
   margin-left: ${(props) => (props.$isNavShown ? '-4em' : '0')};
-
   text-decoration: none;
-
   display: block;
   @media only screen and (max-width: ${MOBILE.navbar}) {
+  margin-top: 0.3em;
     display: ${(props) => (props.$alwaysShow ? 'block' : 'none')};
   }
 `
@@ -150,23 +147,18 @@ const MobileAppLogo = styled(ReactLink)`
   padding: 0.5em;
   /* height: 30vw;
   width: 30vw; */
-
   user-select: none;
-
-  font-size: 3em;
-  margin-bottom: 0;
-
+  /* font-size: 3em; */
+  width: 8em;
+  height: 8em;
+  margin-bottom: 2em;
   text-align: center;
-
   color: ${(props) => props.theme.accent};
-
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: 0;
-
   text-decoration: none;
-
   display: none;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
@@ -186,14 +178,11 @@ const MobileNavBackground = styled.div`
   top: 0;
   right: 0;
   height: 3.5rem;
-
   padding: 0.5rem 0.3rem 0.5rem 0.5rem;
   z-index: 9999;
-
   background-color: ${(props) => props.theme.navbar.background};
   justify-content: space-between;
   align-items: center;
-
   display: none;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
@@ -206,16 +195,12 @@ const MobileNavWrapper = styled.div`
   top: 0;
   right: 0;
   height: 3.5rem;
-
   padding: 0.5rem 0.3rem 0.5rem 0.5rem;
   z-index: 99999999;
-
   pointer-events: none;
-
   /* background-color: ${(props) => props.theme.navbar.background}; */
   justify-content: space-between;
   align-items: center;
-
   display: none;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: flex;
@@ -224,7 +209,6 @@ const MobileNavWrapper = styled.div`
 
 const NavLink = styled(Link)`
   user-select: none;
-
   @media only screen and (max-width: ${MOBILE.navbar}) {
     margin: 0.5em;
   }
@@ -232,7 +216,6 @@ const NavLink = styled(Link)`
 
 const LeftDiv = styled.div`
   display: flex;
-
   @media only screen and (max-width: ${MOBILE.navbar}) {
     flex-direction: column;
     margin-bottom: 0.5em;
@@ -241,7 +224,6 @@ const LeftDiv = styled.div`
 
 const Separator = styled.hr`
   display: none;
-
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
@@ -250,7 +232,6 @@ const Separator = styled.hr`
 
 const RightDiv = styled.div`
   display: flex;
-
   @media only screen and (max-width: ${MOBILE.navbar}) {
     flex-direction: column;
     margin-top: 0.5em;
@@ -263,15 +244,11 @@ const NavWrapper = styled.div`
   left: 0;
   width: 100%;
   height: 3.5rem;
-
   z-index: 99999;
-
   background-color: ${(props) => props.theme.navbar.background};
-
   display: flex;
   justify-content: space-between;
   padding: 0.5rem;
-
   @media only screen and (max-width: ${MOBILE.navbar}) {
     transition: left 600ms ease-in-out;
     ${(props) => (props.$isNavShown ? 'left: 0;' : 'left: -100vw;')}

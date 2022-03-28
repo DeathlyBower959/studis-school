@@ -58,7 +58,6 @@ import defaultThemes from './constants/defaultThemes.json'
 
 // Utils
 import { sleep } from './utils/sleep'
-import { calculateTitle } from './utils/ranking'
 
 // Api
 import { getUser, login } from './api/user'

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import styled, { css, ThemeContext } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { getCommunity, getLeaderboard } from '../../api/community'
 import Account from '../../contexts/AccountContext'
 import ToastNotif from '../../contexts/ToastNotifContext'
@@ -14,6 +14,7 @@ import Form from '../../components/Forms/Form'
 import { CardContainer } from '../../components/Cards/WordCard'
 import useProfilePicture from '../../hooks/useProfilePicture'
 import { truncateNumber } from '../../utils/numbers'
+import VoteArrow from '../../assets/svg/VoteArrow'
 
 function Community() {
   const { userData } = useContext(Account)
@@ -133,32 +134,8 @@ function Community() {
 
                     <VoteContainer>
                       <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                      <Downvote
-                        width="18"
-                        height="19"
-                        viewBox="0 0 10 11"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                          fill={theme.muted}
-                          stroke={theme.secondaryMuted}
-                          strokeLinecap="round"
-                        />
-                      </Downvote>
-                      <Upvote
-                        width="18"
-                        height="19"
-                        viewBox="0 0 10 11"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                          fill={theme.muted}
-                          stroke={theme.secondaryMuted}
-                          strokeLinecap="round"
-                        />
-                      </Upvote>
+                      <Downvote/>
+                      <Upvote/>
                       <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                     </VoteContainer>
                   </SetContainer>
@@ -310,7 +287,7 @@ const UpvoteCount = styled.p`
   color: ${(props) => props.theme.secondaryMuted};
 `
 
-const Upvote = styled.svg`
+const Upvote = styled(VoteArrow)`
   transform: rotateX(180deg);
 `
 
@@ -319,7 +296,7 @@ const DownvoteCount = styled.p`
   color: ${(props) => props.theme.secondaryMuted};
 `
 
-const Downvote = styled.svg``
+const Downvote = styled(VoteArrow)``
 
 const SearchBar = styled(Form.Text)``
 

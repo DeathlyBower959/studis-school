@@ -66,7 +66,7 @@ const useProfilePicture = () => {
       setImages((prev) => [
         ...prev,
         {
-          src: `https://raw.githubusercontent.com/DeathlyBower959/studis-school/images/images/${picture.name}.${picture.ext}`,
+          src: `https://raw.githubusercontent.com/DeathlyBower959/studis-school/images-v2/images/${picture.name}.${picture.ext}`,
           picture
         }
       ])

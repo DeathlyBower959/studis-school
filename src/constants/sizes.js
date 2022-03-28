@@ -3,5 +3,6 @@ export const MOBILE = {
     studyDivider: '650px',
     studyCreate: '650px',
     settings: '650px',
-    viewSet: '850px'
+    viewSet: '850px',
+    userProfile: '650px'
 }

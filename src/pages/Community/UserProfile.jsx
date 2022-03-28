@@ -20,6 +20,9 @@ import { truncateNumber } from '../../utils/numbers'
 import Account from '../../contexts/AccountContext'
 import { addCompetitor, deleteCompetitor } from '../../api/user'
 import ToastNotif from '../../contexts/ToastNotifContext'
+import VoteArrow from '../../assets/svg/VoteArrow'
+import { MOBILE } from '../../constants/sizes'
+
 
 function UserProfile() {
   const { userId } = useParams()
@@ -176,7 +179,7 @@ function UserProfile() {
                 id={set._id}
                 key={uuidv4()}
                 as={Link}
-                to={`/community/${currentUser.userId}/sets/${set._id}`}>
+                to={userData._id === currentUser.userId ? `/study/sets/view/${set._id}` : `/community/${currentUser.userId}/sets/${set._id}`}>
                 <RecentStudyTitle>{set.title}</RecentStudyTitle>
                 <RecentStudyDescription>
                   {truncateString(set.description, 75, false)}
@@ -185,32 +188,8 @@ function UserProfile() {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote
-                      width="18"
-                      height="19"
-                      viewBox="0 0 10 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                        fill={theme.muted}
-                        stroke={theme.secondaryMuted}
-                        strokeLinecap="round"
-                      />
-                    </Downvote>
-                    <Upvote
-                      width="18"
-                      height="19"
-                      viewBox="0 0 10 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                        fill={theme.muted}
-                        stroke={theme.secondaryMuted}
-                        strokeLinecap="round"
-                      />
-                    </Upvote>
+                    <Downvote/>
+                    <Upvote/>
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
@@ -338,7 +317,7 @@ const UpvoteCount = styled.p`
   color: ${(props) => props.theme.secondaryMuted};
 `
 
-const Upvote = styled.svg`
+const Upvote = styled(VoteArrow)`
   transform: rotateX(180deg);
 `
 
@@ -347,7 +326,7 @@ const DownvoteCount = styled.p`
   color: ${(props) => props.theme.secondaryMuted};
 `
 
-const Downvote = styled.svg``
+const Downvote = styled(VoteArrow)``
 
 // User Data
 
@@ -383,7 +362,7 @@ const UserInformationWrapper = styled.div`
 
   max-width: 700px;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.userProfile}) {
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -408,7 +387,7 @@ const RightWrapper = styled.div`
   align-items: center;
   justify-content: right;
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.userProfile}) {
     justify-content: center;
   }
 `
@@ -429,7 +408,7 @@ const VerticalDivider = styled.div`
   width: 2px;
   background-color: ${(props) => props.theme.tertiaryBackground};
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.userProfile}) {
     height: 2px;
     width: 100%;
   }
@@ -443,7 +422,7 @@ const CreatedAt = styled.p`
   font-size: 0.8em;
   color: ${(props) => props.theme.secondaryMuted};
 
-  @media only screen and (max-width: 650px) {
+  @media only screen and (max-width: ${MOBILE.userProfile}) {
     position: relative;
     bottom: 0;
     right: 0;

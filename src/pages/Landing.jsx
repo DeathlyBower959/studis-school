@@ -29,10 +29,13 @@ import { addNumberSuffix, truncateString } from '../utils/strings'
 
 // Images
 import avatarPlaceholder from '../assets/avatar_placeholder.png'
-import { calculateTitle } from '../utils/ranking'
+
 import { updateUser } from '../api/user'
 import useProfilePicture from '../hooks/useProfilePicture'
 import { truncateNumber } from '../utils/numbers'
+import LeftCompetitorArrow from '../assets/svg/LeftCompetitorArrow'
+import RightCompetitorArrow from '../assets/svg/RightCompetitorArrow'
+import VoteArrow from '../assets/svg/VoteArrow'
 
 // FAKE DATA
 const data = [
@@ -191,7 +194,9 @@ const Landing = () => {
               <Spinner height="50px" />
             ) : (
               <>
-                <StatData>Place: {addNumberSuffix(currentLeaderboard?.place)}</StatData>
+                <StatData>
+                  Place: {addNumberSuffix(currentLeaderboard?.place)}
+                </StatData>
                 <StatData>
                   Exp: {truncateNumber(currentLeaderboard?.data?.exp, 2)}
                 </StatData>
@@ -213,7 +218,7 @@ const Landing = () => {
               $offset={
                 images.find(
                   (image) => image.picture.name === userData.profilePicture
-                )?.picture?.offset || {x: -12, y:-12}
+                )?.picture?.offset || { x: -12, y: -12 }
               }
               $scale={
                 images.find(
@@ -252,64 +257,7 @@ const Landing = () => {
           </ResponsiveContainer>
         </ChartContainer>
         <CompetitorContainer>
-          <ArrowLeft
-            onClick={() => {
-              const container = document.getElementById('competitor-inner')
-              const children = container?.children
-
-              if (!children) return
-
-              for (var i = 0; i < children.length; i++) {
-                let prevChild = children[i - 1]
-                let child = children[i]
-
-                let prevVisible = false
-                let currentVisible = false
-
-                if (!prevChild) continue
-
-                const prevObserver = new IntersectionObserver(
-                  function (prevEntries) {
-                    prevVisible = prevEntries[0].isIntersecting
-
-                    const currentObserver = new IntersectionObserver(
-                      function (currentEntries) {
-                        currentVisible = currentEntries[0].isIntersecting
-
-                        currentObserver.unobserve(currentEntries[0].target)
-                        if (!prevVisible && currentVisible) {
-                          prevChild.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'nearest',
-                            inline: 'nearest'
-                          })
-
-                          return
-                        }
-                      },
-                      { threshold: [0.8] }
-                    )
-
-                    currentObserver.observe(child)
-                    prevObserver.unobserve(prevEntries[0].target)
-                  },
-                  { threshold: [0.8] }
-                )
-
-                if (prevChild) prevObserver.observe(prevChild)
-              }
-            }}
-            width="21"
-            height="46"
-            viewBox="0 0 21 46"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M16 4.57898L6 22.6316L16 40.6842"
-              strokeWidth="9"
-              strokeLinecap="round"
-            />
-          </ArrowLeft>
+          <ArrowLeft />
           <CompetitorInnerContainer id="competitor-inner">
             {currentCompetitors?.length > 0 &&
               currentCompetitors.map((comp) => {
@@ -334,69 +282,13 @@ const Landing = () => {
 
             {currentCompetitors?.length <= 0 && (
               <Desc style={{ color: theme.secondaryMuted }}>
-                Looks pretty barren here... Try adding some competition
+                Looks quite empty here... Try adding some competition
               </Desc>
             )}
 
             {currentCompetitors === null && <Spinner height="3em" />}
           </CompetitorInnerContainer>
-          <ArrowRight
-            onClick={() => {
-              const container = document.getElementById('competitor-inner')
-              const children = container?.children
-
-              if (!children) return
-
-              for (var i = 0; i < children.length; i++) {
-                let child = children[i]
-                let nextChild = children[i + 1]
-
-                let currentVisible = false
-                let nextVisible = false
-
-                if (!nextChild) continue
-
-                const nextObserver = new IntersectionObserver(
-                  function (nextEntries) {
-                    nextVisible = nextEntries[0].isIntersecting
-
-                    const currentObserver = new IntersectionObserver(
-                      function (currentEntries) {
-                        currentVisible = currentEntries[0].isIntersecting
-
-                        if (!nextVisible && currentVisible) {
-                          nextChild.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'nearest',
-                            inline: 'nearest'
-                          })
-                        }
-
-                        currentObserver.unobserve(currentEntries[0].target)
-                      },
-                      { threshold: [0.8] }
-                    )
-
-                    currentObserver.observe(child)
-                    nextObserver.unobserve(nextEntries[0].target)
-                  },
-                  { threshold: [0.8] }
-                )
-
-                if (nextChild) nextObserver.observe(nextChild)
-              }
-            }}
-            width="21"
-            height="46"
-            viewBox="0 0 21 46"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M16 4.57898L6 22.6316L16 40.6842"
-              strokeWidth="9"
-              strokeLinecap="round"
-            />
-          </ArrowRight>
+          <ArrowRight />
         </CompetitorContainer>
       </BlockContainer>
 
@@ -422,32 +314,8 @@ const Landing = () => {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote
-                      width="18"
-                      height="19"
-                      viewBox="0 0 10 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                        fill={theme.muted}
-                        stroke={theme.secondaryMuted}
-                        strokeLinecap="round"
-                      />
-                    </Downvote>
-                    <Upvote
-                      width="18"
-                      height="19"
-                      viewBox="0 0 10 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                        fill={theme.muted}
-                        stroke={theme.secondaryMuted}
-                        strokeLinecap="round"
-                      />
-                    </Upvote>
+                    <Downvote />
+                    <Upvote />
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
@@ -456,19 +324,27 @@ const Landing = () => {
           })}
 
         {userData.userSets?.length <= 0 && (
-          <Desc
-            style={{
-              color: theme.secondaryMuted,
-              width: '100%',
-              textAlign: 'center'
-            }}>
-            Looks pretty barren here... Try creating a study set!
-          </Desc>
+          <>
+            <Desc
+              style={{
+                color: theme.secondaryMuted,
+                width: '100%',
+                textAlign: 'center',
+                marginBottom: '0'
+              }}>
+              It's pretty barren here... Try creating a study set!
+            </Desc>
+            <Link to="/study/new">
+              <CreateStudyButton secondary>Create</CreateStudyButton>
+            </Link>
+          </>
         )}
       </BlockContainer>
     </PageWrapper>
   )
 }
+
+const CreateStudyButton = styled(Form.Button)``
 
 const PrestigeButton = styled(Form.Button)`
   margin-top: 1em;
@@ -579,26 +455,11 @@ const ChartContainer = styled.div`
 `
 
 // Competitors
-const Arrow = styled.svg`
-  height: 100%;
-  width: 1em;
-
-  path {
-    stroke: ${(props) => props.theme.inputBackground};
-  }
-
-  transition: filter 300ms ease-out;
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-`
-const ArrowLeft = styled(Arrow)`
+const ArrowLeft = styled(LeftCompetitorArrow)`
   left: 1em;
 `
 
-const ArrowRight = styled(Arrow)`
+const ArrowRight = styled(RightCompetitorArrow)`
   transform: rotateY(180deg);
 
   right: 1em;
@@ -715,7 +576,7 @@ const UpvoteCount = styled.p`
   color: ${(props) => props.theme.secondaryMuted};
 `
 
-const Upvote = styled.svg`
+const Upvote = styled(VoteArrow)`
   transform: rotateX(180deg);
 `
 
@@ -724,5 +585,6 @@ const DownvoteCount = styled.p`
   color: ${(props) => props.theme.secondaryMuted};
 `
 
-const Downvote = styled.svg``
+const Downvote = styled(VoteArrow)``
+
 export default Landing
