@@ -78,13 +78,13 @@ function Community() {
                             images.find(
                               (image) =>
                                 image.picture.name === user.profilePicture
-                            )?.picture?.offset
+                            )?.picture?.offset || {x: -12, y:-12}
                           }
                           $scale={
                             images.find(
                               (image) =>
                                 image.picture.name === user.profilePicture
-                            )?.picture?.scale
+                            )?.picture?.scale || 0.85
                           }
                           width="125%"
                           src={

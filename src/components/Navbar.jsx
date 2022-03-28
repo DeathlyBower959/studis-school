@@ -10,11 +10,7 @@ import Account from '../contexts/AccountContext'
 import Dropdown from '../atoms/Navbar/Dropdown'
 import DropdownLink from '../atoms/Navbar/DropdownLink'
 import { MOBILE } from '../constants/sizes'
-import { truncateString } from '../utils/strings'
 import useProfilePicture from '../hooks/useProfilePicture'
-
-import avatarPlaceholder from '../assets/avatar_placeholder.png'
-import UserTitle from './UserTitle'
 
 const Navbar = () => {
   const { isLoggedIn, userData, AuthLogout } = useContext(Account)

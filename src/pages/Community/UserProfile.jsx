@@ -130,12 +130,12 @@ function UserProfile() {
                 $offset={
                   images.find(
                     (image) => image.picture.name === currentUser.profilePicture
-                  )?.picture?.offset
+                  )?.picture?.offset || 0.85
                 }
                 $scale={
                   images.find(
                     (image) => image.picture.name === currentUser.profilePicture
-                  )?.picture?.scale
+                  )?.picture?.scale || {x: -12, y:-12}
                 }
                 width="125%"
                 src={
