@@ -10,6 +10,7 @@ const useProfilePicture = () => {
     setLoadings([])
     setErrors([])
     setImages([])
+
     const fetchImage = async (picture, index) => {
       setLoadings((prev) => [...prev, true])
       try {
