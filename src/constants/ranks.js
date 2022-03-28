@@ -19,5 +19,5 @@ export default {
   0: { title: 'Misologist', multiplier: 1 }
 }
 
-export const expDelay = 5 * 1 * 1000
+export const expDelay = 5 * 60 * 1000
 export const expToAdd = () => randomRange(20, 95)
