@@ -2,9 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 
 const TextboxInput = styled.input`
-  max-width: 500px;
+  max-width: 400px;
   border-radius: 5px;
-  width: 50%;
+  width: 90%;
   height: 42px;
   outline: none;
   color: ${(props) => props.theme.foreground};

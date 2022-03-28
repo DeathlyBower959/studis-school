@@ -11,8 +11,7 @@ const Icon = styled.svg`
   stroke: ${(props) => props.theme.foreground};
   stroke-width: 2px;
 `
-// Hide checkbox visually but remain accessible to screen readers.
-// Source: https://polished.js.org/docs/#hidevisually
+
 const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
   border: 0;
   clip: rect(0 0 0 0);

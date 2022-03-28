@@ -22,7 +22,6 @@ function EditWord() {
   const UpdateWord = () => {
     const UpdateSetPromise = new Promise(async (resolve, reject) => {
       const updateResult = await updateWord(localAuth, wordId, values)
-      console.log(updateResult)
 
       if (!updateResult?.data?.newUser) reject(updateResult.data)
 

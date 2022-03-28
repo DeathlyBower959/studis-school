@@ -89,6 +89,7 @@ const StyledCardFront = styled.div`
   width: 100%;
   height: auto;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 
   background: ${(props) => props.theme.secondaryBackground};
 
@@ -110,6 +111,7 @@ const StyledCardBack = styled.div`
   width: 100%;
   height: auto;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 
   background-color: ${(props) => props.theme.secondaryBackground};
   transform: rotateY(180deg);

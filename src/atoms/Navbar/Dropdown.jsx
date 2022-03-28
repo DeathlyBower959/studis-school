@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect, useCallback, useRef } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 import { ChevronDown } from 'react-feather'
@@ -7,6 +7,7 @@ import { MOBILE } from '../../constants/sizes'
 const Dropdown = ({ children, title, img, tb }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const theme = useContext(ThemeContext)
+  const ContentWrapperRef = useRef()
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev)
@@ -16,19 +17,40 @@ const Dropdown = ({ children, title, img, tb }) => {
     setIsDropdownOpen(false)
   }
 
+  const handleClickOutside = (event) => {
+    if (
+      ContentWrapperRef.current &&
+      !ContentWrapperRef.current.contains(event.target)
+    ) {
+      closeDropdown()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
+
   return (
-    <ContentWrapper>
+    <ContentWrapper ref={ContentWrapperRef}>
       <LinkWrapper
         onClick={toggleDropdown}
         onKeyUp={(e) => {
-          if (e.keyCode === 13) {
+          if (e.keyCode === 13 || e.keyCode === 32) {
             e.preventDefault()
             toggleDropdown()
           }
         }}
         tabIndex={tb}>
         {img ? (
-          <DropdownLinkImage src={img} />
+          <ProfilePictureWrapper>
+            <ProfilePictureChooserImg
+              width="125%"
+              src={img.src}
+              $offset={img.picture.offset}
+              $scale={img.picture.scale}
+            />
+          </ProfilePictureWrapper>
         ) : (
           <DropdownLink>{title}</DropdownLink>
         )}
@@ -95,9 +117,10 @@ const LinkWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
-  transition: filter 250ms ease-in-out;
-
-  &:hover {
+  svg {
+    transition: filter 250ms ease-in-out;
+  }
+  &:hover svg {
     filter: brightness(0.8);
   }
 
@@ -109,12 +132,24 @@ const LinkWrapper = styled.div`
   padding-right: 0.5em;
 `
 
-const DropdownLinkImage = styled.img`
-  margin-right: 0.3em;
-
-  height: 100%;
+const ProfilePictureWrapper = styled.div`
+  width: 2.5em;
+  height: 2.5em;
+  overflow: hidden;
   border-radius: 50%;
+  position: relative;
+
+  cursor: pointer;
 `
+
+const ProfilePictureChooserImg = styled.img`
+  position: absolute;
+  top: ${(props) => props.$offset?.y || 0}%;
+  left: ${(props) => props.$offset?.x || 0}%;
+
+  transform: scale(${(props) => props.$scale || 1});
+`
+
 const DropdownLink = styled.p`
   color: ${(props) => props.theme.navbar.foreground};
 

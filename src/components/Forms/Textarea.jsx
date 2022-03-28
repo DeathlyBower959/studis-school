@@ -2,15 +2,15 @@ import React from 'react'
 import styled from 'styled-components'
 
 const TextAreaStyled = styled.textarea`
-
-width: 60%;
-border-radius: 0.5rem;
-resize: none;
-min-height: 6em;
-height: 6em;
-overflow: hidden;
-overflow-y: scroll;
-outline: none;
+  max-width: 400px;
+  width: 90%;
+  border-radius: 0.5rem;
+  resize: none;
+  min-height: 6em;
+  height: 6em;
+  overflow: hidden;
+  overflow-y: scroll;
+  outline: none;
   color: ${(props) => props.theme.foreground};
   border: 1px solid ${(props) => props.theme.secondaryBackground}08;
   caret-color: ${(props) => props.theme.muted};
@@ -30,6 +30,7 @@ outline: none;
     border-bottom: 3px solid ${(props) => props.theme.accent};
   }
   background-color: ${(props) => props.theme.inputBackground};
+  margin-left: 7px;
 `
 
 const TextArea = (props) => {

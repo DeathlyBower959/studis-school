@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import styled, { ThemeContext } from 'styled-components'
+import styled, { css, ThemeContext } from 'styled-components'
 import { getCommunity, getLeaderboard } from '../../api/community'
 import Account from '../../contexts/AccountContext'
 import ToastNotif from '../../contexts/ToastNotifContext'
@@ -11,6 +11,9 @@ import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../atoms/Loaders/Spinner'
 import Form from '../../components/Forms/Form'
+import { CardContainer } from '../../components/Cards/WordCard'
+import useProfilePicture from '../../hooks/useProfilePicture'
+import { truncateNumber } from '../../utils/numbers'
 
 function Community() {
   const { userData } = useContext(Account)
@@ -19,6 +22,8 @@ function Community() {
 
   const [currentLeaderboard, setCurrentLeaderboard] = useState()
   const [currentCommunity, setCurrentCommunity] = useState()
+
+  const { imgLoadings, imgErrors, images } = useProfilePicture()
 
   const GetLeaders = async () => {
     const leadersResult = await getLeaderboard()
@@ -55,7 +60,7 @@ function Community() {
   return (
     <PageWrapper>
       <Header>Community</Header>
-      <BlockHeader>Top Leaders</BlockHeader>
+      <BlockHeader>Top 3 Leaders</BlockHeader>
       <LeaderWrapper>
         {currentLeaderboard ? (
           <>
@@ -63,18 +68,39 @@ function Community() {
               currentLeaderboard.slice(0, 3).map((user) => {
                 return (
                   <UserWrapper
+                    key={uuidv4()}
                     as={Link}
-                    to="/community/leaderboard"
-                    style={{ textDecoration: 'none' }}
-                    key={user.userId}>
+                    to={`/community/user/${user.userId}`}>
                     <LeftWrapper>
-                      <UserProfileLogo src={avatarPlaceholder} />
+                      <ProfilePictureWrapper>
+                        <ProfilePictureChooserImg
+                          $offset={
+                            images.find(
+                              (image) =>
+                                image.picture.name === user.profilePicture
+                            )?.picture?.offset
+                          }
+                          $scale={
+                            images.find(
+                              (image) =>
+                                image.picture.name === user.profilePicture
+                            )?.picture?.scale
+                          }
+                          width="125%"
+                          src={
+                            images.find(
+                              (image) =>
+                                image.picture.name === user.profilePicture
+                            )?.src || avatarPlaceholder
+                          }
+                        />
+                      </ProfilePictureWrapper>
                       <Username $isCurrentUser={user.userId === userData?._id}>
                         {truncateString(user.name, 18)}
                       </Username>
                     </LeftWrapper>
                     <RightWrapper>
-                      <UserEXP>EXP: {user.exp}</UserEXP>
+                      <UserEXP>EXP: {truncateNumber(user.exp, 2)}</UserEXP>
                       <UserPrestige>Prestige: {user.prestiges}</UserPrestige>
                     </RightWrapper>
                   </UserWrapper>
@@ -86,6 +112,7 @@ function Community() {
             <Spinner height="50px" />
           </SpinnerWrapper>
         )}
+        <SeeMoreLink to="/community/leaderboard">See more...</SeeMoreLink>
       </LeaderWrapper>
       <BlockHeader>Study Sets</BlockHeader>
       <BlockContainer>
@@ -104,38 +131,36 @@ function Community() {
                       {truncateString(set.description, 75, false)}
                     </RecentStudyDescription>
 
-                    {set.isPublic && (
-                      <VoteContainer>
-                        <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                        <Downvote
-                          width="18"
-                          height="19"
-                          viewBox="0 0 10 11"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                            fill={theme.muted}
-                            stroke={theme.secondaryMuted}
-                            strokeLinecap="round"
-                          />
-                        </Downvote>
-                        <Upvote
-                          width="18"
-                          height="19"
-                          viewBox="0 0 10 11"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-                            fill={theme.muted}
-                            stroke={theme.secondaryMuted}
-                            strokeLinecap="round"
-                          />
-                        </Upvote>
-                        <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
-                      </VoteContainer>
-                    )}
+                    <VoteContainer>
+                      <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
+                      <Downvote
+                        width="18"
+                        height="19"
+                        viewBox="0 0 10 11"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
+                          fill={theme.muted}
+                          stroke={theme.secondaryMuted}
+                          strokeLinecap="round"
+                        />
+                      </Downvote>
+                      <Upvote
+                        width="18"
+                        height="19"
+                        viewBox="0 0 10 11"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
+                          fill={theme.muted}
+                          stroke={theme.secondaryMuted}
+                          strokeLinecap="round"
+                        />
+                      </Upvote>
+                      <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
+                    </VoteContainer>
                   </SetContainer>
                 )
               })}
@@ -150,6 +175,59 @@ function Community() {
   )
 }
 
+const ProfilePictureWrapper = styled.div`
+  width: 4em;
+  height: 4em;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+
+  cursor: pointer;
+`
+
+const ProfilePictureChooserImg = styled.img`
+  position: absolute;
+  top: ${(props) => props.$offset?.y || 0}%;
+  left: ${(props) => props.$offset?.x || 0}%;
+
+  transform: scale(${(props) => props.$scale || 1});
+`
+
+const WordTitle = styled.p`
+  font-size: 1.75em;
+  margin: 0.25em;
+
+  width: 15ch;
+  overflow-wrap: anywhere;
+  word-wrap: break-all;
+
+  text-align: center;
+
+  color: ${(props) => props.theme.secondaryForeground};
+`
+
+const WordType = styled.p`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 0.5em;
+  font-size: 0.8em;
+
+  color: ${(props) => props.theme.secondaryMuted};
+`
+
+const WordDef = styled.p`
+  color: ${(props) => props.theme.secondaryForeground};
+
+  margin: 0.25em;
+
+  width: 11ch;
+  overflow-wrap: anywhere;
+  word-wrap: break-all;
+
+  text-align: center;
+`
+
 const WordContainer = styled.div`
   display: flex;
   gap: 1em;
@@ -160,6 +238,12 @@ const WordContainer = styled.div`
   margin-top: 1em;
 
   justify-content: center;
+`
+
+const SeeMoreLink = styled(Link)`
+  text-decoration: none;
+  cursor: pointer;
+  color: ${(props) => props.theme.muted};
 `
 
 const BlockContainer = styled.div`

@@ -17,6 +17,8 @@ export const signup = async (name, email, password) => {
       password
     })
 
+    console.log(res)
+
     return res
   } catch (error) {
     if (error.response) {
@@ -131,7 +133,7 @@ export const updateUser = async (token, newUser = {}) => {
   }
 }
 
-export const createCompetitor = async (token, userId) => {
+export const addCompetitor = async (token, userId) => {
   const missingValues = isProvided({ token, userId }, ['token', 'userId'])
   if (missingValues.length > 0) return { isMissing: true, missingValues }
 

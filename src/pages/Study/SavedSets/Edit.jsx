@@ -30,8 +30,6 @@ function Edit() {
     const UpdateSetPromise = new Promise(async (resolve, reject) => {
       const updateResult = await updateRemixedSet(localAuth, setId, values)
 
-      console.log(updateResult)
-
 
       if (!updateResult?.data?.newUser) reject(updateResult.data)
 

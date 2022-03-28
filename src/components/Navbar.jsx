@@ -11,10 +11,16 @@ import Dropdown from '../atoms/Navbar/Dropdown'
 import DropdownLink from '../atoms/Navbar/DropdownLink'
 import { MOBILE } from '../constants/sizes'
 import { truncateString } from '../utils/strings'
+import useProfilePicture from '../hooks/useProfilePicture'
+
+import avatarPlaceholder from '../assets/avatar_placeholder.png'
+import UserTitle from './UserTitle'
 
 const Navbar = () => {
   const { isLoggedIn, userData, AuthLogout } = useContext(Account)
   const theme = useContext(ThemeContext)
+
+  const { imgLoadings, imgErrors, images } = useProfilePicture()
 
   const userLoggedInState = isLoggedIn()
   const [isNavShown, setShowNav] = useState(false)
@@ -25,7 +31,7 @@ const Navbar = () => {
 
   return (
     <>
-    <NavSpacer/>
+      <NavSpacer />
       <NavWrapper $isNavShown={isNavShown} className="noSelect">
         <LeftDiv>
           <AppLogo tabIndex="-1" to="/">
@@ -50,7 +56,12 @@ const Navbar = () => {
           )}
           {userLoggedInState === 1 && (
             <>
-              <Dropdown tb="0" title={truncateString(userData.name || 'Account', 20)}>
+              {/* title={truncateString(userData.name || 'Account', 20)} */}
+              <Dropdown
+                tb="0"
+                img={images.find(
+                  (image) => image.picture.name === userData.profilePicture
+                )}>
                 <DropdownLink
                   onClick={hideNav}
                   text="Settings"
@@ -79,11 +90,7 @@ const Navbar = () => {
       </NavWrapper>
       <MobileNavBackground />
       <MobileNavWrapper className="noSelect">
-        <AppLogo
-          tabIndex="-1"
-          to="/"
-          $isNavShown={isNavShown}
-          $alwaysShow>
+        <AppLogo tabIndex="-1" to="/" $isNavShown={isNavShown} $alwaysShow>
           Studis
         </AppLogo>
         <HamburgerWrapper
@@ -269,7 +276,6 @@ const NavWrapper = styled.div`
   justify-content: space-between;
   padding: 0.5rem;
 
-  
   @media only screen and (max-width: ${MOBILE.navbar}) {
     transition: left 600ms ease-in-out;
     ${(props) => (props.$isNavShown ? 'left: 0;' : 'left: -100vw;')}

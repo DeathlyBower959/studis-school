@@ -4,8 +4,6 @@ import { useState } from 'react'
 export const CardContainer = ({ children, ...props }) => {
   const [isCardFlipped, setIsCardFlipped] = useState(0)
 
-  console.log(isCardFlipped)
-
   return (
     <StyledCardContainer {...props}>
       {children.map((child, index) => {
@@ -156,6 +154,7 @@ const StyledCardFront = styled.div`
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   background: ${(props) =>
     props.endcard
       ? props.theme.tertiaryBackground
@@ -175,6 +174,7 @@ const StyledCardBack = styled.div`
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 
   background-color: ${(props) => props.theme.tertiaryBackground};
   color: white;

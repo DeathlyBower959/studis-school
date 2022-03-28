@@ -2,7 +2,7 @@ import './styles.css'
 import 'react-toastify/dist/ReactToastify.css'
 
 import { Routes as ReactRoutes, Route, useNavigate } from 'react-router-dom'
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { toast, ToastContainer } from 'react-toastify'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
@@ -19,15 +19,11 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Settings from './pages/Settings'
 
-// Planner (Not sure if we have time)
-// import Planner from "./pages/Planner";
-
 // Community
 import Community from './pages/Community/Community'
 import CommunityLeaders from './pages/Community/Leaders'
 import CommunityUserProfile from './pages/Community/UserProfile'
 import CommunityUserSet from './pages/Community/UserSet'
-import CommunityUserWord from './pages/Community/UserWord'
 
 // Study
 import Study from './pages/Study/Study'
@@ -62,6 +58,7 @@ import defaultThemes from './constants/defaultThemes.json'
 
 // Utils
 import { sleep } from './utils/sleep'
+import { calculateTitle } from './utils/ranking'
 
 // Api
 import { getUser, login } from './api/user'
@@ -81,22 +78,24 @@ const App = () => {
   const theme =
     defaultThemes.themes[
       defaultThemes.themes.findIndex(
-        (theme) => theme.themeID == userData?.settings?.selectedTheme
+        (theme) => theme.themeID === userData?.settings?.selectedTheme
       )
-    ] || defaultThemes.themes[0]
+    ] || (window.matchMedia('(prefers-color-scheme: dark)').matches ? defaultThemes.themes[0] : defaultThemes.themes[1])
 
   const SendToast = useCallback(
-    async (message, type, currentTheme = theme, icon = null) => {
+    async (message, type, currentTheme = null, icon = null) => {
       if (!message) return console.error('Failed to send toast, no message!')
 
       const defaultToastStyle = {
         icon,
         style: {
-          backgroundColor: currentTheme.secondaryBackground,
-          color: currentTheme.foreground
+          backgroundColor: (currentTheme || theme).secondaryBackground,
+          color: (currentTheme || theme).foreground
         },
         progressStyle: {
-          background: `linear-gradient(58deg,${currentTheme.accent} 20%,${currentTheme.secondaryAccent} 100%)`
+          background: `linear-gradient(58deg,${
+            (currentTheme || theme).accent
+          } 20%,${(currentTheme || theme).secondaryAccent} 100%)`
         }
       }
 
@@ -251,7 +250,10 @@ const App = () => {
   useEffect(() => {
     AuthLogin()
 
-    SendToast('App is not polished, so please don\'t use real information!', 'info')
+    SendToast(
+      "This app is not polished, so please don't use real information!",
+      'info'
+    )
   }, [])
 
   // 0 = Not Logged In
@@ -267,6 +269,8 @@ const App = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
+        <GlobalStyle />
+
         <ToastContainer
           position="bottom-right"
           autoClose={5000}
@@ -296,7 +300,10 @@ const App = () => {
               <Route path="/" element={<Landing />} />
               <Route path="/about" element={<About />} />
 
-              <Route path="/community/leaderboard" element={<CommunityLeaders />} />
+              <Route
+                path="/community/leaderboard"
+                element={<CommunityLeaders />}
+              />
               <Route
                 path="/community/user/:userId"
                 element={<CommunityUserProfile />}
@@ -377,10 +384,6 @@ const App = () => {
                   path="/community/:userId/sets/:setId"
                   element={<CommunityUserSet />}
                 />
-                <Route
-                  path="/community/:userId/words/:wordId"
-                  element={<CommunityUserWord />}
-                />
               </Route>
             </ReactRoutes>
             <WebsiteBackground />
@@ -401,6 +404,26 @@ const WebsiteBackground = styled.div`
   z-index: -999999;
 
   background-color: ${(props) => props.theme.background};
+`
+
+const GlobalStyle = createGlobalStyle`
+  body::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.scrollbarColor};
+  }  
+
+  /* Use to fix when account has not been found, and toast has already been sent*/
+  .Toastify__toast {
+    background-color: ${(props) => props.theme.secondaryBackground} !important;
+    color: ${(props) => props.theme.foreground} !important;
+  }
+  .Toastify__progress-bar {
+    background: linear-gradient(58deg, ${(props) => props.theme.accent} 20%, ${(
+  props
+) => props.theme.secondaryAccent} 100%) !important;
+  }
+  .Toastify__close-button {
+    color: ${(props) => props.theme.foreground} !important;  
+  }
 `
 
 export default App

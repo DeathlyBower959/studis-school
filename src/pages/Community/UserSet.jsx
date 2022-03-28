@@ -6,7 +6,12 @@ import { ChevronDown } from 'react-feather'
 import { MOBILE } from '../../constants/sizes'
 import Spinner from '../../atoms/Loaders/Spinner'
 import ToastNotif from '../../contexts/ToastNotifContext'
-import { downvoteSet, getCommunity, remixSet, upvoteSet } from '../../api/community'
+import {
+  downvoteSet,
+  getCommunity,
+  remixSet,
+  upvoteSet
+} from '../../api/community'
 
 function UserSet() {
   const { userId, setId } = useParams()
@@ -33,7 +38,7 @@ function UserSet() {
     const RemixSetPromise = new Promise(async (resolve, reject) => {
       const remixResult = await remixSet(localAuth, userId, setId)
 
-      console.log(remixResult)
+      if (remixResult.status !== 200) return reject()
 
       resolve()
       navigate(
@@ -81,13 +86,74 @@ function UserSet() {
 
   const data = currentCommunity.userSets[dataIndex]
 
-  const UpvoteSet = async () => {
+  const UpvoteSet = async (remove = false) => {
     const upvoteResult = await upvoteSet(localAuth, userId, setId)
-  }
-  
-  const DownvoteSet = async () => {
-  const downvoteResult = await downvoteSet(localAuth, userId, setId)
+    if (upvoteResult?.data?.errors?.userSets?.length === 0) {
+      setCurrentCommunity((prev) => {
+        let newCommunity = {
+          ...prev
+        }
 
+        if (!remove) {
+          newCommunity.userSets[dataIndex] = {
+            ...newCommunity.userSets[dataIndex],
+            downvotes: prev.userSets[dataIndex].downvotes.filter(
+              (userId) => userId !== userData._id
+            ),
+            upvotes: !prev.userSets[dataIndex].upvotes.includes(userData._id)
+              ? [...prev.userSets[dataIndex].upvotes, userData._id]
+              : prev.userSets[dataIndex].upvotes
+          }
+        } else {
+          newCommunity.userSets[dataIndex] = {
+            ...newCommunity.userSets[dataIndex],
+            downvotes: prev.userSets[dataIndex].downvotes.filter(
+              (userId) => userId !== userData._id
+            ),
+            upvotes: prev.userSets[dataIndex].upvotes.filter(
+              (userId) => userId !== userData._id
+            )
+          }
+        }
+        return newCommunity
+      })
+    }
+  }
+
+  const DownvoteSet = async (remove = false) => {
+    const downvoteResult = await downvoteSet(localAuth, userId, setId)
+    if (downvoteResult?.data?.errors?.userSets?.length === 0) {
+      setCurrentCommunity((prev) => {
+        let newCommunity = {
+          ...prev
+        }
+
+        if (!remove) {
+          newCommunity.userSets[dataIndex] = {
+            ...newCommunity.userSets[dataIndex],
+            upvotes: prev.userSets[dataIndex].upvotes.filter(
+              (userId) => userId !== userData._id
+            ),
+            downvotes: !prev.userSets[dataIndex].downvotes.includes(
+              userData._id
+            )
+              ? [...prev.userSets[dataIndex].downvotes, userData._id]
+              : prev.userSets[dataIndex].downvotes
+          }
+        } else {
+          newCommunity.userSets[dataIndex] = {
+            ...newCommunity.userSets[dataIndex],
+            upvotes: prev.userSets[dataIndex].upvotes.filter(
+              (userId) => userId !== userData._id
+            ),
+            downvotes: prev.userSets[dataIndex].downvotes.filter(
+              (userId) => userId !== userData._id
+            )
+          }
+        }
+        return newCommunity
+      })
+    }
   }
 
   return (
@@ -96,9 +162,10 @@ function UserSet() {
       <Description>{data.description}</Description>
       <NavWrapper>
         <Downvote
-          onClick={DownvoteSet}
-          width="18"
-          height="19"
+          $isDownvoted={data.downvotes.includes(userData._id)}
+          onClick={() => DownvoteSet(data.downvotes.includes(userData._id))}
+          width="27"
+          height="28"
           viewBox="0 0 10 11"
           fill="none"
           xmlns="http://www.w3.org/2000/svg">
@@ -109,18 +176,17 @@ function UserSet() {
             strokeLinecap="round"
           />
         </Downvote>
-        <StudyModeButton onClick={RemixSet}>Remix</StudyModeButton>
+        <StudyModeButton onClick={RemixSet}>Add To Sets</StudyModeButton>
         <Upvote
-          onClick={UpvoteSet}
-          width="18"
-          height="19"
+          $isUpvoted={data.upvotes.includes(userData._id)}
+          onClick={() => UpvoteSet(data.upvotes.includes(userData._id))}
+          width="27"
+          height="28"
           viewBox="0 0 10 11"
           fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <path
             d="M7.29167 3.94878L7.29167 2C7.29167 1.44772 6.84395 1 6.29167 1L3.70833 0.999999C3.15605 0.999999 2.70833 1.44771 2.70833 2L2.70833 3.94878C2.70833 4.43189 2.31669 4.82353 1.83358 4.82353C1.09774 4.82353 0.690699 5.67674 1.15369 6.24867L4.22276 10.0399C4.62299 10.5343 5.37701 10.5343 5.77724 10.0399L8.84631 6.24867C9.3093 5.67675 8.90226 4.82353 8.16642 4.82353C7.68331 4.82353 7.29167 4.43189 7.29167 3.94878Z"
-            fill={theme.muted}
-            stroke={theme.secondaryMuted}
             strokeLinecap="round"
           />
         </Upvote>
@@ -142,10 +208,25 @@ function UserSet() {
 const Upvote = styled.svg`
   transform: rotateX(180deg);
   cursor: pointer;
+
+  path {
+    fill: ${(props) =>
+      props.$isUpvoted ? props.theme.accent : props.theme.muted};
+    stroke: ${(props) =>
+      props.$isUpvoted ? props.theme.secondaryAccent : props.theme.outline};
+  }
 `
 
 const Downvote = styled.svg`
-cursor: pointer;`
+  cursor: pointer;
+
+  path {
+    fill: ${(props) =>
+      props.$isDownvoted ? props.theme.accent : props.theme.muted};
+    stroke: ${(props) =>
+      props.$isDownvoted ? props.theme.secondaryAccent : props.theme.outline};
+  }
+`
 
 const NavWrapper = styled.div`
   display: flex;

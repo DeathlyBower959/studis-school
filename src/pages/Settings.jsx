@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useContext, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -18,10 +18,15 @@ import validatePassword from '../utils/validatePassword'
 import Spinner from '../atoms/Loaders/Spinner'
 import { MOBILE } from '../constants/sizes'
 
+import useProfilePicture from '../hooks/useProfilePicture'
+import CharCounter from '../atoms/CharCounter'
+
 const Settings = () => {
   const { userData, localAuth, setUserData, AuthLogout } = useContext(Account)
   const SendToast = useContext(ToastNotif)
   const [selectedPage, setSelectedPage] = useState('settings.loading')
+
+  const { imgLoadings, imgErrors, images } = useProfilePicture()
 
   const [newData, setNewData] = useState({ ...userData, password: null })
   const [errors, setErrors] = useState({})
@@ -280,6 +285,7 @@ const Settings = () => {
             <InputGroup>
               <SettingTitle>Name</SettingTitle>
               <SettingTextbox
+                maxLength="30"
                 name="name"
                 onChange={handleTextboxChange}
                 value={newData?.name || ''}
@@ -291,6 +297,20 @@ const Settings = () => {
                 name="email"
                 onChange={handleTextboxChange}
                 value={newData?.email || ''}
+              />
+            </InputGroup>
+            <InputGroup>
+              <SettingTitle>Biography</SettingTitle>
+              <SettingTextarea
+                maxLength="190"
+                name="biography"
+                onChange={handleTextboxChange}
+                value={newData?.biography || ''}
+              />
+              <CharCounter
+                style={{ width: '90%', maxWidth: '400px', textAlign: 'right' }}
+                currentLength={newData?.biography?.length}
+                maxLength={190}
               />
             </InputGroup>
             <br />
@@ -330,10 +350,36 @@ const Settings = () => {
                   )
                 })}
               </ThemeChooser>
-              <br />
-              <InputGroup>
-                <UpdateButton onClick={SaveUserSettings}>Save</UpdateButton>
-              </InputGroup>
+            </InputGroup>
+            <InputGroup>
+              <SettingTitle>Profile Picture</SettingTitle>
+              <SettingDivider style={{ marginBottom: '1em' }} />
+              <ProfileChooserWrapper>
+                {images.map((img) => {
+                  return (
+                    <ProfilePictureWrapper
+                      onClick={() =>
+                        setNewData((prev) => {
+                          return { ...prev, profilePicture: img.picture.name }
+                        })
+                      }
+                      $isSelected={newData.profilePicture === img.picture.name}
+                      pictureData={img}
+                      key={uuidv4()}>
+                      <ProfilePictureChooserImg
+                        $scale={img.picture.scale}
+                        $offset={img.picture.offset}
+                        width="125%"
+                        src={img.src}
+                      />
+                    </ProfilePictureWrapper>
+                  )
+                })}
+              </ProfileChooserWrapper>
+            </InputGroup>
+            <br />
+            <InputGroup>
+              <UpdateButton onClick={SaveUserSettings}>Save</UpdateButton>
             </InputGroup>
           </SettingsWindow>
         )}
@@ -406,6 +452,39 @@ const Settings = () => {
   )
 }
 
+const ProfileChooserWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 30em;
+  overflow: overlay;
+  height: 14em;
+  gap: 1em;
+  border-radius: 15px;
+`
+
+const ProfilePictureWrapper = styled.div`
+  width: 4em;
+  height: 4em;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+
+  ${(props) =>
+    props.$isSelected &&
+    css`
+      border: 4px solid ${props.theme.accent};
+    `}
+
+  cursor: pointer;
+`
+
+const ProfilePictureChooserImg = styled.img`
+  position: absolute;
+  top: ${(props) => props.$offset?.y || 0}%;
+  left: ${(props) => props.$offset?.x || 0}%;
+  transform: scale(${(props) => props.$scale || 1});
+`
+
 const SpacerDiv = styled.div`
   margin: 4em auto;
   max-width: 1000px;
@@ -461,7 +540,7 @@ const SettingsWindow = styled.div`
 `
 
 const InputGroup = styled.div`
-  margin-left: 0.5em;
+  margin: 1em 0 0 0.5em;
 `
 
 const SettingHeader = styled.p`
@@ -478,9 +557,10 @@ const SettingDivider = styled.div`
 `
 
 const SettingTextbox = styled(Form.Text)``
+const SettingTextarea = styled(Form.Textarea)``
 
 const SettingTitle = styled.p`
-  margin: 1em 0 0.3em 0;
+  margin: 0 0 0.3em 0;
   color: ${(props) => props.theme.tertiaryForeground};
 `
 

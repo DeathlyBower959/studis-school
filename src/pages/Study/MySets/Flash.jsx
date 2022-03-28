@@ -2,17 +2,51 @@ import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import Account from '../../../contexts/AccountContext'
 import { CardContainer } from '../../../components/Cards/WordCard'
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'react-feather'
+import { updateUser } from '../../../api/user'
+import { expDelay, expToAdd } from '../../../constants/ranks'
+import { calculateRank } from '../../../utils/ranking'
+import ExpNotifications from '../../../components/ExpNotification/ExpNotification'
 
 const FlashSet = () => {
   const { setId } = useParams()
 
-  const { userData } = useContext(Account)
+  const { userData, localAuth } = useContext(Account)
 
   const [termIndex, setTermIndex] = useState(0)
+  const [expNotification, setExpNotification] = useState(null)
+  
+  const lastInteracted = useRef(0)
 
   const dataIndex = userData?.userSets?.findIndex((set) => set._id === setId)
+
+  useEffect(() => {
+    const updateTime = () => {
+      lastInteracted.current = Date.now()
+    }
+
+    document.addEventListener('click', updateTime)
+    return () => document.removeEventListener('click', updateTime)
+  }, [])
+
+  const sendExpNotification = (newExp) => {
+    setExpNotification(newExp)
+  }
+
+  useEffect(() => {
+    const expInterval = setInterval(async () => {
+      if (lastInteracted.current + expDelay >= Date.now()) {
+        const newExp = Math.floor(expToAdd() * calculateRank(userData.exp).multiplier)
+        const updateUserResult = await updateUser(localAuth, {
+          exp: `+${newExp}`
+        })
+        if (updateUserResult.status === 200) sendExpNotification(newExp)
+      }
+    }, expDelay)
+
+    return () => clearInterval(expInterval)
+  }, [lastInteracted])
 
   if (dataIndex < 0)
     return (
@@ -69,6 +103,7 @@ const FlashSet = () => {
         </CardIndex>
         <StyledArrowRight onClick={nextCard} />
       </CardNav>
+      <ExpNotifications expNotification={expNotification} setExpNotification={setExpNotification}/>
     </>
   )
 }

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import Spinner from '../atoms/Loaders/Spinner'
+import UserTitle from '../components/UserTitle'
 
 // Recharts
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis } from 'recharts'
@@ -27,7 +28,11 @@ import Account from '../contexts/AccountContext'
 import { addNumberSuffix, truncateString } from '../utils/strings'
 
 // Images
-import placeholderAvatar from '../assets/avatar_placeholder.png'
+import avatarPlaceholder from '../assets/avatar_placeholder.png'
+import { calculateTitle } from '../utils/ranking'
+import { updateUser } from '../api/user'
+import useProfilePicture from '../hooks/useProfilePicture'
+import { truncateNumber } from '../utils/numbers'
 
 // FAKE DATA
 const data = [
@@ -70,11 +75,13 @@ const data = [
 
 const Landing = () => {
   const navigate = useNavigate()
-  const { userData, isLoggedIn } = useContext(Account)
+  const { userData, isLoggedIn, localAuth, setUserData } = useContext(Account)
   const theme = useContext(ThemeContext)
 
   const [currentCompetitors, setCurrentCompetitors] = useState([])
   const [currentLeaderboard, setCurrentLeaderboard] = useState([])
+
+  const { imgLoadings, imgErrors, images } = useProfilePicture()
 
   useEffect(() => {
     if (isLoggedIn() === 0 || isLoggedIn() === 2)
@@ -159,10 +166,18 @@ const Landing = () => {
 
   const refreshLeaderboard = async () => {
     const leaderboard = await getLeaderboard()
-    if (leaderboard?.data) setCurrentLeaderboard({
-      place: leaderboard.data.findIndex(user => user.userId === userData._id) + 1,
-      data: leaderboard.data.find(user => user.userId === userData._id)
-    })
+    if (leaderboard?.data)
+      setCurrentLeaderboard({
+        place:
+          leaderboard.data.findIndex((user) => user.userId === userData._id) +
+          1,
+        data: leaderboard.data.find((user) => user.userId === userData._id)
+      })
+  }
+
+  const PrestigeUser = async () => {
+    const updateResult = await updateUser(localAuth, { prestige: true })
+    if (updateResult.status === 200) setUserData(updateResult.data.newUser)
   }
 
   // Means the user has an account
@@ -172,12 +187,47 @@ const Landing = () => {
       <BlockContainer>
         <StatContainer>
           <StatDataContainer>
-            <StatData>Place: {currentLeaderboard.place}</StatData>
-            <StatData>Exp: {currentLeaderboard.data.exp}</StatData>
-            <StatData>Prestige: {currentLeaderboard.data.prestiges}</StatData>
-            <StatData>Study Streak: PLACEHOLDER</StatData>
+            {currentLeaderboard?.length === 0 ? (
+              <Spinner height="50px" />
+            ) : (
+              <>
+                <StatData>Place: {addNumberSuffix(currentLeaderboard?.place)}</StatData>
+                <StatData>
+                  Exp: {truncateNumber(currentLeaderboard?.data?.exp, 2)}
+                </StatData>
+                <StatData>
+                  Prestige: {currentLeaderboard?.data?.prestiges}
+                </StatData>
+                <StatData>
+                  Title:
+                  <UserTitle
+                    exp={currentLeaderboard?.data?.exp}
+                    style={{ marginTop: '-0.25em ' }}
+                  />
+                </StatData>
+              </>
+            )}
           </StatDataContainer>
-          <StatImage src={placeholderAvatar} />
+          <ProfilePictureWrapper>
+            <StatImage
+              $offset={
+                images.find(
+                  (image) => image.picture.name === userData.profilePicture
+                )?.picture?.offset
+              }
+              $scale={
+                images.find(
+                  (image) => image.picture.name === userData.profilePicture
+                )?.picture?.scale
+              }
+              width="125%"
+              src={
+                images.find(
+                  (image) => image.picture.name === userData.profilePicture
+                )?.src || avatarPlaceholder
+              }
+            />
+          </ProfilePictureWrapper>
         </StatContainer>
         <ChartContainer>
           <ResponsiveContainer width="100%">
@@ -264,9 +314,16 @@ const Landing = () => {
             {currentCompetitors?.length > 0 &&
               currentCompetitors.map((comp) => {
                 return (
-                  <CompetitorContentContainer id={comp.userId} key={uuidv4()}>
+                  <CompetitorContentContainer
+                    as={Link}
+                    style={{ textDecoration: 'none' }}
+                    to={`/community/user/${comp.userId}`}
+                    id={comp.userId}
+                    key={uuidv4()}>
                     <CompetitorName>{comp.name}</CompetitorName>
-                    <CompetitorData>Exp: {comp.exp}</CompetitorData>
+                    <CompetitorData>
+                      Exp: {truncateNumber(comp.exp)}
+                    </CompetitorData>
                     <CompetitorData>Prestige: {comp.prestiges}</CompetitorData>
                     <CompetitorData>
                       Leaderboard: {addNumberSuffix(comp.leaderboard)}
@@ -342,7 +399,12 @@ const Landing = () => {
           </ArrowRight>
         </CompetitorContainer>
       </BlockContainer>
-      <BlockHeader>Recents</BlockHeader>
+
+      {userData.exp >= 1000000 && (
+        <PrestigeButton onClick={PrestigeUser}>Prestige Now</PrestigeButton>
+      )}
+
+      <BlockHeader>Recent</BlockHeader>
       <BlockContainer>
         {userData.userSets?.length > 0 &&
           userData.userSets.map((set) => {
@@ -408,6 +470,21 @@ const Landing = () => {
   )
 }
 
+const PrestigeButton = styled(Form.Button)`
+  margin-top: 1em;
+
+  @keyframes bounce {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.15);
+    }
+  }
+
+  animation: bounce 1s infinite alternate;
+`
+
 const PageWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -446,7 +523,7 @@ const BlockHeader = styled.p`
 const StatContainer = styled.div`
   background-color: ${(props) => props.theme.secondaryBackground};
   flex-grow: 1;
-  min-width: 17em;
+  min-width: max-content;
 
   padding: 1em;
   border-radius: 15px;
@@ -462,15 +539,29 @@ const StatContainer = styled.div`
 
 const StatDataContainer = styled.div``
 
-const StatData = styled.p`
+const StatData = styled.div`
   margin: 0.9em;
   color: ${(props) => props.theme.secondaryForeground};
+  display: flex;
+  gap: 0.5em;
+`
+
+const ProfilePictureWrapper = styled.div`
+  width: 7em;
+  height: 7em;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+
+  box-shadow: 5px 5px 13px 0px rgba(0, 0, 0, 0.25);
 `
 
 const StatImage = styled.img`
-  height: 7em;
-  width: 7em;
-  border-radius: 50%;
+  position: absolute;
+  top: ${(props) => props.$offset?.y || 0}%;
+  left: ${(props) => props.$offset?.x || 0}%;
+
+  transform: scale(${(props) => props.$scale || 1});
 `
 
 // Charts

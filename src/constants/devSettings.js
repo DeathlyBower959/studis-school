@@ -1,5 +1,5 @@
 const devURL = 'http://localhost:5000'
-const prodURL = 'https://studis-server-deathlybower959.vercel.app'
+const prodURL = 'https://studis-server.vercel.app'
 
 // Uses development server (Only for ben, as he has access to the server)
 const devServer = false
@@ -20,6 +20,7 @@ export default {
     get: apiURL + '/user/get',
     community: apiURL + '/community',
     leaderboard: apiURL + '/community/leaderboard',
-    competitors: apiURL + '/community/competitors'
+    competitors: apiURL + '/community/competitors',
+    communityUser: apiURL + '/community/user'
   }
 }

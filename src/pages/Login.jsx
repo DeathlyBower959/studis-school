@@ -42,13 +42,13 @@ const Login = () => {
             required
           />
           {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
-        </FormContainer>
         <Link to="/resetpassword" style={{ textDecoration: 'none' }}>
           <BoldLink style={{ margin: '5px auto 15px auto' }}>
             Forgot your password?
           </BoldLink>
         </Link>
         <SubmitButton onClick={handleSubmit}>Login</SubmitButton>
+        </FormContainer>
         <MutedText style={{ margin: '10px auto 0 auto' }} href="#">
           Don't have an account?
         </MutedText>

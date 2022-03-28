@@ -10,11 +10,15 @@ import avatarPlaceholder from '../../assets/avatar_placeholder.png'
 import Account from '../../contexts/AccountContext'
 import { Link } from 'react-router-dom'
 import Spinner from '../../atoms/Loaders/Spinner'
+import useProfilePicture from '../../hooks/useProfilePicture'
+import { truncateNumber } from '../../utils/numbers'
 
 function Leaders() {
   const SendToast = useContext(ToastNotif)
   const { userData } = useContext(Account)
   const [currentLeaderboard, setCurrentLeaderboard] = useState()
+
+  const { imgErrors, imgLoadings, images } = useProfilePicture()
 
   const currentUserWrapperRef = useRef()
 
@@ -91,14 +95,36 @@ function Leaders() {
                             : null
                         }>
                         <LeftWrapper>
-                          <UserProfileLogo src={avatarPlaceholder} />
+                          <ProfilePictureWrapper>
+                            <ProfilePictureChooserImg
+                              $offset={
+                                images.find(
+                                  (image) =>
+                                    image.picture.name === user.profilePicture
+                                )?.picture?.offset
+                              }
+                              $scale={
+                                images.find(
+                                  (image) =>
+                                    image.picture.name === user.profilePicture
+                                )?.picture?.scale
+                              }
+                              width="125%"
+                              src={
+                                images.find(
+                                  (image) =>
+                                    image.picture.name === user.profilePicture
+                                )?.src || avatarPlaceholder
+                              }
+                            />
+                          </ProfilePictureWrapper>
                           <Username
                             $isCurrentUser={user.userId === userData?._id}>
                             {truncateString(user.name, 18)}
                           </Username>
                         </LeftWrapper>
                         <RightWrapper>
-                          <UserEXP>EXP: {user.exp}</UserEXP>
+                          <UserEXP>EXP: {truncateNumber(user.exp, 2)}</UserEXP>
                           <UserPrestige>
                             Prestige: {user.prestiges}
                           </UserPrestige>
@@ -136,6 +162,24 @@ function Leaders() {
     </>
   )
 }
+
+const ProfilePictureWrapper = styled.div`
+  width: 4em;
+  height: 4em;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+
+  cursor: pointer;
+`
+
+const ProfilePictureChooserImg = styled.img`
+  position: absolute;
+  top: ${(props) => props.$offset?.y || 0}%;
+  left: ${(props) => props.$offset?.x || 0}%;
+  
+  transform: scale(${(props) => props.$scale || 1});
+`
 
 const SpinnerWrapper = styled.div`
   display: flex;
