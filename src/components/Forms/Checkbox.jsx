@@ -31,8 +31,8 @@ const StyledCheckbox = styled.div`
   height: 16px;
   background: ${(props) =>
     props.checked ? props.theme.accent : props.theme.inputBackground};
-  border-radius: 3px;
-  transition: all 150ms;
+  border-radius: 3pt;
+  transition: all 350ms;
 
   ${HiddenCheckbox}:focus + & {
     box-shadow: 0 0 0 3px ${(props) => props.theme.accent};
@@ -44,21 +44,24 @@ const StyledCheckbox = styled.div`
 `
 
 const CheckboxText = styled.span`
-  color: ${props => props.theme.secondaryForeground};
+  color: ${(props) => props.theme.secondaryForeground};
+  user-select: none;
 `
 
-const Checkbox = ({ checked, labelText = 'No Label Text', ...props }) => (
-  <label>
-    <CheckboxContainer>
-      <HiddenCheckbox checked={checked} {...props} />
-      <StyledCheckbox checked={checked}>
-        <Icon viewBox="0 0 24 24">
-          <polyline points="20 6 9 17 4 12" />
-        </Icon>
-      </StyledCheckbox>
-    </CheckboxContainer>
-    <CheckboxText style={{ marginLeft: 8 }}>{labelText}</CheckboxText>
-  </label>
-)
+const Checkbox = ({ checked, labelText = '', ...props }) => {
+  return (
+    <label>
+      <CheckboxContainer>
+        <HiddenCheckbox checked={checked} {...props} />
+        <StyledCheckbox checked={checked}>
+          <Icon viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12" />
+          </Icon>
+        </StyledCheckbox>
+      </CheckboxContainer>
+      <CheckboxText style={{ marginLeft: 8 }}>{labelText}</CheckboxText>
+    </label>
+  )
+}
 
 export default Checkbox

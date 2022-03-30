@@ -79,7 +79,7 @@ function Community() {
                             images.find(
                               (image) =>
                                 image.picture.name === user.profilePicture
-                            )?.picture?.offset || {x: -12, y:-12}
+                            )?.picture?.offset || { x: -12, y: -12 }
                           }
                           $scale={
                             images.find(
@@ -134,8 +134,8 @@ function Community() {
 
                     <VoteContainer>
                       <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                      <Downvote/>
-                      <Upvote/>
+                      <Downvote />
+                      <Upvote />
                       <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                     </VoteContainer>
                   </SetContainer>
@@ -280,6 +280,8 @@ const VoteContainer = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.3em;
+
+  background-color: ${(props) => props.theme.secondaryBackground};
 `
 
 const UpvoteCount = styled.p`

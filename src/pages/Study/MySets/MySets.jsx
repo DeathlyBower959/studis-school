@@ -31,8 +31,8 @@ const MySets = () => {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote/>
-                    <Upvote/>
+                    <Downvote />
+                    <Upvote />
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
@@ -132,6 +132,8 @@ const VoteContainer = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.3em;
+
+  background-color: ${(props) => props.theme.secondaryBackground};
 `
 
 const UpvoteCount = styled.p`

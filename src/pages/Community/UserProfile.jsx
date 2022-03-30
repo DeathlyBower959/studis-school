@@ -310,6 +310,8 @@ const VoteContainer = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.3em;
+
+  background-color: ${props => props.theme.secondaryBackground};
 `
 
 const UpvoteCount = styled.p`

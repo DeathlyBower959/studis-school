@@ -11,6 +11,7 @@ import ToastNotif from "../contexts/ToastNotifContext";
 
 // API
 import { signup } from "../api/user";
+import useProfilePicture from "../hooks/useProfilePicture";
 
 const Signup = () => {
   const { AuthLogin } = useContext(Account);

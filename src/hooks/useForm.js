@@ -32,15 +32,21 @@ const useForm = (
 
   const handleChange = (event) => {
     if (customFunctions.handleChange) return customFunctions.handleChange(event)
-
     event?.persist()
+
     setErrors((prev) => {
       return { ...prev, [event.target.name]: null }
     })
-    setValues((values) => ({
-      ...values,
-      [event.target.name]: event.target.value
-    }))
+
+    setValues((prev) => {
+      return {
+        ...prev,
+        [event.target.name]:
+          event.target.value === 'on' || event.target.value === 'off'
+            ? event.target.checked
+            : event.target.value
+      }
+    })
   }
 
   const addError = (name, message) => {

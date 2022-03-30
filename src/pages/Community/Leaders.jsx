@@ -72,7 +72,7 @@ function Leaders() {
 
       return () => observer.unobserve(currentObserved)
     }
-  }, [currentUserWrapperRef])
+  }, [currentUserWrapperRef.current])
 
   return (
     <>

@@ -86,13 +86,30 @@ const Landing = () => {
 
   const { imgLoadings, imgErrors, images } = useProfilePicture()
 
+  const refreshCompetitors = async () => {
+    if (userData?.competitors?.length === 0) return setCurrentCompetitors([])
+    const competitors = await getCompetitors(userData?.competitors)
+    if (competitors?.data) setCurrentCompetitors(competitors.data)
+  }
+
+  const refreshLeaderboard = async () => {
+    const leaderboard = await getLeaderboard()
+    if (leaderboard?.data)
+      setCurrentLeaderboard({
+        place:
+          leaderboard.data.findIndex((user) => user.userId === userData._id) +
+          1,
+        data: leaderboard.data.find((user) => user.userId === userData._id)
+      })
+  }
+
   useEffect(() => {
     if (isLoggedIn() === 0 || isLoggedIn() === 2)
       return setCurrentCompetitors(null)
 
     refreshCompetitors()
     refreshLeaderboard()
-  }, [userData])
+  }, [userData, refreshCompetitors, refreshLeaderboard])
 
   if (isLoggedIn() === 2)
     return (
@@ -143,7 +160,7 @@ const Landing = () => {
             <CardBack>
               <Desc>
                 You wont have to use those crumpled index cards that you lost in
-                your bag, or the ones that you forgot it home!
+                your bag, or the ones that you forgot at home!
               </Desc>
             </CardBack>
           </Card>
@@ -161,22 +178,7 @@ const Landing = () => {
       </PageWrapper>
     )
 
-  const refreshCompetitors = async () => {
-    if (userData?.competitors?.length === 0) return setCurrentCompetitors([])
-    const competitors = await getCompetitors(userData?.competitors)
-    if (competitors?.data) setCurrentCompetitors(competitors.data)
-  }
-
-  const refreshLeaderboard = async () => {
-    const leaderboard = await getLeaderboard()
-    if (leaderboard?.data)
-      setCurrentLeaderboard({
-        place:
-          leaderboard.data.findIndex((user) => user.userId === userData._id) +
-          1,
-        data: leaderboard.data.find((user) => user.userId === userData._id)
-      })
-  }
+  
 
   const PrestigeUser = async () => {
     const updateResult = await updateUser(localAuth, { prestige: true })
@@ -340,6 +342,7 @@ const Landing = () => {
           </>
         )}
       </BlockContainer>
+      <br/>
     </PageWrapper>
   )
 }
@@ -569,6 +572,8 @@ const VoteContainer = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.3em;
+
+  background-color: ${props => props.theme.secondaryBackground};
 `
 
 const UpvoteCount = styled.p`

@@ -9,7 +9,7 @@
       "navbar": {
         "background": "#2d2d2d",
         "foreground": "#888",
-        "outline": "#363636"
+        "outline": "#464646"
       },
 
       "expNotif": {
@@ -90,7 +90,7 @@
       "navbar": {
         "background": "#292d29",
         "foreground": "#788278",
-        "outline": "#2f332f"
+        "outline": "#3d473b"
       },
 
       "expNotif": {

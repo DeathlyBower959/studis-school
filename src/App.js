@@ -14,7 +14,6 @@ import Routes from './atoms/Routes/Routes'
 // Pages
 import Landing from './pages/Landing'
 import PageNotFound from './pages/PageNotFound'
-import About from './pages/About'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Settings from './pages/Settings'
@@ -79,7 +78,7 @@ const App = () => {
       defaultThemes.themes.findIndex(
         (theme) => theme.themeID === userData?.settings?.selectedTheme
       )
-    ] || (window.matchMedia('(prefers-color-scheme: dark)').matches ? defaultThemes.themes[0] : defaultThemes.themes[1])
+    ] || defaultThemes.themes[0]
 
   const SendToast = useCallback(
     async (message, type, currentTheme = null, icon = null) => {
@@ -297,7 +296,6 @@ const App = () => {
               <Route path="*" element={<PageNotFound />} />
 
               <Route path="/" element={<Landing />} />
-              <Route path="/about" element={<About />} />
 
               <Route
                 path="/community/leaderboard"

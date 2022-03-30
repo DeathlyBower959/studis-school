@@ -1,31 +1,31 @@
-import styled, { ThemeContext } from 'styled-components'
-import { useContext, useState } from 'react'
-import { Turn as Hamburger } from 'hamburger-react'
-import { Link as ReactLink } from 'react-router-dom'
+import styled, { ThemeContext } from "styled-components";
+import { useContext, useState } from "react";
+import { Turn as Hamburger } from "hamburger-react";
+import { Link as ReactLink } from "react-router-dom";
 
 // Atoms
-import Spinner from '../atoms/Loaders/Spinner'
-import Link from '../atoms/Navbar/Link'
-import Account from '../contexts/AccountContext'
-import Dropdown from '../atoms/Navbar/Dropdown'
-import DropdownLink from '../atoms/Navbar/DropdownLink'
-import { MOBILE } from '../constants/sizes'
-import useProfilePicture from '../hooks/useProfilePicture'
+import Spinner from "../atoms/Loaders/Spinner";
+import Link from "../atoms/Navbar/Link";
+import Account from "../contexts/AccountContext";
+import Dropdown from "../atoms/Navbar/Dropdown";
+import DropdownLink from "../atoms/Navbar/DropdownLink";
+import { MOBILE } from "../constants/sizes";
+import useProfilePicture from "../hooks/useProfilePicture";
 
-import AppLogo2 from '../assets/svg/Logo'
+import AppLogo2 from "../assets/svg/Logo";
 
 const Navbar = () => {
-  const { isLoggedIn, userData, AuthLogout } = useContext(Account)
-  const theme = useContext(ThemeContext)
+  const { isLoggedIn, userData, AuthLogout } = useContext(Account);
+  const theme = useContext(ThemeContext);
 
-  const { imgLoadings, imgErrors, images } = useProfilePicture()
+  const { imgLoadings, imgErrors, images } = useProfilePicture();
 
-  const userLoggedInState = isLoggedIn()
-  const [isNavShown, setShowNav] = useState(false)
+  const userLoggedInState = isLoggedIn();
+  const [isNavShown, setShowNav] = useState(false);
 
   const hideNav = () => {
-    setShowNav(false)
-  }
+    setShowNav(false);
+  };
 
   return (
     <>
@@ -42,7 +42,6 @@ const Navbar = () => {
           <NavLink onClick={hideNav} text="Study" url="/study" />
           <NavLink onClick={hideNav} text="Dictionary" url="/words" />
           <NavLink onClick={hideNav} text="Community" url="/community" />
-          <NavLink onClick={hideNav} text="About" url="/about" />
         </LeftDiv>
         <Separator />
         <RightDiv>
@@ -59,7 +58,8 @@ const Navbar = () => {
                 tb="0"
                 img={images.find(
                   (image) => image.picture.name === userData.profilePicture
-                )}>
+                )}
+              >
                 <DropdownLink
                   onClick={hideNav}
                   text="Settings"
@@ -68,8 +68,8 @@ const Navbar = () => {
                 <DropdownLink
                   tabIndex="0"
                   onClick={() => {
-                    hideNav()
-                    AuthLogout()
+                    hideNav();
+                    AuthLogout();
                   }}
                   text="Log Out"
                 />
@@ -83,7 +83,7 @@ const Navbar = () => {
           )}
         </RightDiv>
         <MobileAppLogo tabIndex="-1" to="/" onClick={hideNav}>
-          <AppLogo2/>
+          <AppLogo2 />
         </MobileAppLogo>
       </NavWrapper>
       <MobileNavBackground />
@@ -95,11 +95,12 @@ const Navbar = () => {
           tabIndex="0"
           onKeyUp={(e) => {
             if (e.keyCode === 13) {
-              e.preventDefault()
+              e.preventDefault();
 
-              setShowNav((prev) => !prev)
+              setShowNav((prev) => !prev);
             }
-          }}>
+          }}
+        >
           <Hamburger
             toggled={isNavShown}
             toggle={setShowNav}
@@ -109,23 +110,23 @@ const Navbar = () => {
         </HamburgerWrapper>
       </MobileNavWrapper>
     </>
-  )
-}
+  );
+};
 
 const SpinnerWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const NavSpacer = styled.div`
   width: 100%;
   height: 3.5rem;
-`
+`;
 
 const HamburgerWrapper = styled.div`
   pointer-events: all;
-`
+`;
 
 const AppLogo = styled(ReactLink)`
   padding-left: 0.3em;
@@ -134,14 +135,14 @@ const AppLogo = styled(ReactLink)`
   pointer-events: all;
   user-select: none;
   color: ${(props) => props.theme.accent};
-  margin-left: ${(props) => (props.$isNavShown ? '-4em' : '0')};
+  margin-left: ${(props) => (props.$isNavShown ? "-4em" : "0")};
   text-decoration: none;
   display: block;
   @media only screen and (max-width: ${MOBILE.navbar}) {
-  margin-top: 0.3em;
-    display: ${(props) => (props.$alwaysShow ? 'block' : 'none')};
+    margin-top: 0.3em;
+    display: ${(props) => (props.$alwaysShow ? "block" : "none")};
   }
-`
+`;
 
 const MobileAppLogo = styled(ReactLink)`
   padding: 0.5em;
@@ -163,14 +164,14 @@ const MobileAppLogo = styled(ReactLink)`
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
   }
-`
+`;
 const VerticalSeparator = styled.div`
   width: 1px;
   height: 100%;
   margin-left: 1em;
   margin-right: 0.5em;
-  background-color: ${(props) => props.theme.navbar.foreground};
-`
+  background-color: ${(props) => props.theme.navbar.outline};
+`;
 
 const MobileNavBackground = styled.div`
   position: fixed;
@@ -187,7 +188,7 @@ const MobileNavBackground = styled.div`
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
   }
-`
+`;
 
 const MobileNavWrapper = styled.div`
   position: fixed;
@@ -205,14 +206,14 @@ const MobileNavWrapper = styled.div`
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: flex;
   }
-`
+`;
 
 const NavLink = styled(Link)`
   user-select: none;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     margin: 0.5em;
   }
-`
+`;
 
 const LeftDiv = styled.div`
   display: flex;
@@ -220,7 +221,7 @@ const LeftDiv = styled.div`
     flex-direction: column;
     margin-bottom: 0.5em;
   }
-`
+`;
 
 const Separator = styled.hr`
   display: none;
@@ -228,7 +229,7 @@ const Separator = styled.hr`
     display: block;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
   }
-`
+`;
 
 const RightDiv = styled.div`
   display: flex;
@@ -236,7 +237,7 @@ const RightDiv = styled.div`
     flex-direction: column;
     margin-top: 0.5em;
   }
-`
+`;
 
 const NavWrapper = styled.div`
   position: fixed;
@@ -251,12 +252,12 @@ const NavWrapper = styled.div`
   padding: 0.5rem;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     transition: left 600ms ease-in-out;
-    ${(props) => (props.$isNavShown ? 'left: 0;' : 'left: -100vw;')}
+    ${(props) => (props.$isNavShown ? "left: 0;" : "left: -100vw;")}
     display: block;
     position: fixed;
     align-items: center;
     height: 100%;
   }
-`
+`;
 
-export default Navbar
+export default Navbar;
