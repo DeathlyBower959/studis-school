@@ -114,6 +114,7 @@ function UserSet() {
             )
           }
         }
+        
         return newCommunity
       })
     }
@@ -161,12 +162,12 @@ function UserSet() {
       <Description>{data.description}</Description>
       <NavWrapper>
         <Downvote
-          $isDownvoted={data.downvotes.includes(userData._id)}
+          isdownvoted={data.downvotes.includes(userData._id)}
           onClick={() => DownvoteSet(data.downvotes.includes(userData._id))}
         />
         <StudyModeButton onClick={RemixSet}>Add To Sets</StudyModeButton>
         <Upvote
-          $isUpvoted={data.upvotes.includes(userData._id)}
+          isupvoted={data.upvotes.includes(userData._id)}
           onClick={() => UpvoteSet(data.upvotes.includes(userData._id))}
         />
       </NavWrapper>
@@ -188,8 +189,7 @@ const Upvote = styled(VoteArrow)`
   transform: rotateX(180deg);
 `
 
-const Downvote = styled(VoteArrow)`
-`
+const Downvote = styled(VoteArrow)``
 
 const NavWrapper = styled.div`
   display: flex;

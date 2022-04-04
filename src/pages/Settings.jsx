@@ -483,6 +483,9 @@ const ProfilePictureChooserImg = styled.img`
   top: ${(props) => props.$offset?.y || 0}%;
   left: ${(props) => props.$offset?.x || 0}%;
   transform: scale(${(props) => props.$scale || 1});
+
+  user-select: none;
+  -webkit-user-select: none;
 `
 
 const SpacerDiv = styled.div`

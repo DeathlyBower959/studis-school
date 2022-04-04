@@ -1,58 +1,40 @@
 import styled from 'styled-components'
 import { useState } from 'react'
 
-export const CardContainer = ({ front, back, termIndex, index, ...props }) => {
+export const CardContainer = ({ front, back, ...props }) => {
   const [isCardFlipped, setIsCardFlipped] = useState(false)
 
-  const hideCard = () => {
-    if (isCardFlipped === true) setIsCardFlipped(false)
-  }
-
   return (
-    <StyledCardContainer $termIndex={termIndex} $index={index} {...props}>
+    <StyledCardContainer {...props}>
       <CardWrapper
         maxw={props.maxw}
         isCardFlipped={isCardFlipped}
         onClick={() => {
           setIsCardFlipped((prev) => !prev)
         }}>
-        {termIndex !== index && hideCard()}
-
         <StyledCardFront {...props}>{front}</StyledCardFront>
-        <StyledCardFront $spacer $isCardFlipped={isCardFlipped} {...props}>
-          {front}
-        </StyledCardFront>
 
         <StyledCardBack {...props}>{back}</StyledCardBack>
-        <StyledCardBack $spacer $isCardFlipped={isCardFlipped} {...props}>
-          {back}
-        </StyledCardBack>
       </CardWrapper>
     </StyledCardContainer>
   )
 }
 
 const StyledCardContainer = styled.div`
-display: ${(props) => (props.$termIndex === props.$index ? 'block' : 'none')};
+  display: block;
   background-color: transparent;
   width: clamp(
     ${(props) => props.minw},
     ${(props) => props.prefferedw},
     ${(props) => props.maxw}
   );
-  /* height: clamp(
-    ${(props) => props.minh},
-    ${(props) => props.prefferedh},
-    ${(props) => props.maxh}
-  ); */
-  height: auto;
+  height: 9em;
   perspective: 1000px;
   cursor: pointer;
 
   flex: 1 1 25%;
   min-width: 17em;
   max-width: 25%;
-
 `
 
 const CardWrapper = styled.div`
@@ -66,7 +48,7 @@ const CardWrapper = styled.div`
   transform-origin: 0;
   position: relative;
   
-    /* Return */
+  /* Return */
   transition: transform 0.6s, z-index 0s 0.167s;
   /* Forward */
   ${(props) =>
@@ -85,44 +67,39 @@ const CardWrapper = styled.div`
 `
 
 const StyledCardFront = styled.div`
-  position: ${(props) => (props.$spacer ? 'relative' : 'absolute')};
+  position: absolute;
   width: 100%;
-  height: auto;
+  height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 
   background: ${(props) => props.theme.secondaryBackground};
 
-  display: ${(props) =>
-    props.$spacer && props.$isCardFlipped ? 'none' : 'flex'};
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2em;
+  padding: 1em 2em;
   border-radius: 8px;
 
   transition: transform 400ms ease-in-out;
-
-  visibility: ${(props) => (props.$spacer ? 'hidden' : 'visible')};
 `
 
 const StyledCardBack = styled.div`
-  position: ${(props) => (props.$spacer ? 'relative' : 'absolute')};
+  position: absolute;
   width: 100%;
-  height: auto;
+  height: 100%;
+
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 
   background-color: ${(props) => props.theme.secondaryBackground};
   transform: rotateY(180deg);
 
-  display: ${(props) =>
-    props.$spacer && !props.$isCardFlipped ? 'none' : 'flex'};
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2em;
+  padding: 1em 2em;
   border-radius: 8px;
-
-  visibility: ${(props) => (props.$spacer ? 'hidden' : 'visible')};
 `

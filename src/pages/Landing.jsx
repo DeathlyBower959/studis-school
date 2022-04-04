@@ -1,5 +1,5 @@
 import styled, { ThemeContext } from 'styled-components'
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import Spinner from '../atoms/Loaders/Spinner'
@@ -36,6 +36,7 @@ import { truncateNumber } from '../utils/numbers'
 import LeftCompetitorArrow from '../assets/svg/LeftCompetitorArrow'
 import RightCompetitorArrow from '../assets/svg/RightCompetitorArrow'
 import VoteArrow from '../assets/svg/VoteArrow'
+import ProfilePicture from '../atoms/ProfilePicture'
 
 // FAKE DATA
 const data = [
@@ -86,13 +87,13 @@ const Landing = () => {
 
   const { imgLoadings, imgErrors, images } = useProfilePicture()
 
-  const refreshCompetitors = async () => {
+  const refreshCompetitors = useCallback(async () => {
     if (userData?.competitors?.length === 0) return setCurrentCompetitors([])
     const competitors = await getCompetitors(userData?.competitors)
     if (competitors?.data) setCurrentCompetitors(competitors.data)
-  }
-
-  const refreshLeaderboard = async () => {
+  }, [userData])
+  
+  const refreshLeaderboard = useCallback(async () => {
     const leaderboard = await getLeaderboard()
     if (leaderboard?.data)
       setCurrentLeaderboard({
@@ -101,7 +102,12 @@ const Landing = () => {
           1,
         data: leaderboard.data.find((user) => user.userId === userData._id)
       })
-  }
+  }, [userData])
+
+  const PrestigeUser = useCallback(async () => {
+    const updateResult = await updateUser(localAuth, { prestige: true })
+    if (updateResult.status === 200) setUserData(updateResult.data.newUser)
+  }, [localAuth])
 
   useEffect(() => {
     if (isLoggedIn() === 0 || isLoggedIn() === 2)
@@ -178,12 +184,6 @@ const Landing = () => {
       </PageWrapper>
     )
 
-  
-
-  const PrestigeUser = async () => {
-    const updateResult = await updateUser(localAuth, { prestige: true })
-    if (updateResult.status === 200) setUserData(updateResult.data.newUser)
-  }
 
   // Means the user has an account
   return (
@@ -215,26 +215,7 @@ const Landing = () => {
               </>
             )}
           </StatDataContainer>
-          <ProfilePictureWrapper>
-            <StatImage
-              $offset={
-                images.find(
-                  (image) => image.picture.name === userData.profilePicture
-                )?.picture?.offset || { x: -12, y: -12 }
-              }
-              $scale={
-                images.find(
-                  (image) => image.picture.name === userData.profilePicture
-                )?.picture?.scale || 0.85
-              }
-              width="125%"
-              src={
-                images.find(
-                  (image) => image.picture.name === userData.profilePicture
-                )?.src || avatarPlaceholder
-              }
-            />
-          </ProfilePictureWrapper>
+          <ProfilePicture height='7em' profilePicture={userData.profilePicture}/>
         </StatContainer>
         <ChartContainer>
           <ResponsiveContainer width="100%">
@@ -316,8 +297,8 @@ const Landing = () => {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote />
-                    <Upvote />
+                    <Downvote isdownvoted={set.downvotes.includes(userData._id)}/>
+                    <Upvote isupvoted={set.upvotes.includes(userData._id)}/>
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
@@ -342,7 +323,7 @@ const Landing = () => {
           </>
         )}
       </BlockContainer>
-      <br/>
+      <br />
     </PageWrapper>
   )
 }
@@ -425,24 +406,6 @@ const StatData = styled.div`
   gap: 0.5em;
 `
 
-const ProfilePictureWrapper = styled.div`
-  width: 7em;
-  height: 7em;
-  overflow: hidden;
-  border-radius: 50%;
-  position: relative;
-
-  box-shadow: 5px 5px 13px 0px rgba(0, 0, 0, 0.25);
-`
-
-const StatImage = styled.img`
-  position: absolute;
-  top: ${(props) => props.$offset?.y || 0}%;
-  left: ${(props) => props.$offset?.x || 0}%;
-
-  transform: scale(${(props) => props.$scale || 1});
-`
-
 // Charts
 const ChartContainer = styled.div`
   background-color: ${(props) => props.theme.secondaryBackground};
@@ -489,8 +452,10 @@ const CompetitorContainer = styled.div`
 
 const CompetitorInnerContainer = styled.div`
   overflow: hidden;
+  overflow-x: scroll;
   height: 100%;
   width: 100%;
+  /* padding-left: 15em; */
 
   border-radius: 15px;
 
@@ -502,7 +467,7 @@ const CompetitorInnerContainer = styled.div`
   gap: 1em;
 `
 
-const CompetitorContentContainer = styled.div`
+const CompetitorContentContainer = styled.div` 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -573,7 +538,7 @@ const VoteContainer = styled.div`
   align-items: center;
   gap: 0.3em;
 
-  background-color: ${props => props.theme.secondaryBackground};
+  background-color: ${(props) => props.theme.secondaryBackground};
 `
 
 const UpvoteCount = styled.p`

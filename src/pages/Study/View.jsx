@@ -12,14 +12,14 @@ function Study() {
           <Link to="/study/sets">
             <SectionButton secondary>My Sets</SectionButton>
           </Link>
-          <SectionDesc>Want to study sets that you have created?</SectionDesc>
+          <SectionDesc>Need to study your created sets?</SectionDesc>
         </SectionWrapper>
         <Divider />
         <SectionWrapper>
           <Link to="/study/saved">
             <SectionButton secondary>Saved Sets</SectionButton>
           </Link>
-          <SectionDesc>Need to find your remixed sets?</SectionDesc>
+          <SectionDesc>Want to review other remixed sets?</SectionDesc>
         </SectionWrapper>
       </Container>
     </>

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ChevronDown } from 'react-feather'
 import { MOBILE } from '../../constants/sizes'
 import avatarPlaceholder from '../../assets/avatar_placeholder.png'
+import ProfilePicture from '../ProfilePicture'
 
 const Dropdown = ({ children, title, img, tb }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -44,14 +45,7 @@ const Dropdown = ({ children, title, img, tb }) => {
         }}
         tabIndex={tb}>
         {img ? (
-          <ProfilePictureWrapper>
-            <ProfilePictureChooserImg
-              width="125%"
-              src={img.src || avatarPlaceholder}
-              $offset={img.picture.offset  || {x: -12, y:-12}}
-              $scale={img.picture.scale || 0.85}
-            />
-          </ProfilePictureWrapper>
+          <ProfilePicture height='2.5em' profilePicture={img}/>
         ) : (
           <DropdownLink>{title}</DropdownLink>
         )}
@@ -149,6 +143,8 @@ const ProfilePictureChooserImg = styled.img`
   left: ${(props) => props.$offset?.x || 0}%;
 
   transform: scale(${(props) => props.$scale || 1});
+  user-select: none;
+  -webkit-user-select: none;
 `
 
 const DropdownLink = styled.p`

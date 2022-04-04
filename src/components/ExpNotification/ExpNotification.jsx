@@ -35,7 +35,7 @@ const ExpNotificationWrapper = styled.div`
       bottom: -10em;
       opacity: 0;
     }
-    60% {
+    45% {
       bottom: 1em;
       opacity: 1;
     }

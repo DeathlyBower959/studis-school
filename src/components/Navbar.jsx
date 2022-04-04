@@ -56,9 +56,7 @@ const Navbar = () => {
               {/* title={truncateString(userData.name || 'Account', 20)} */}
               <Dropdown
                 tb="0"
-                img={images.find(
-                  (image) => image.picture.name === userData.profilePicture
-                )}
+                img={userData.profilePicture}
               >
                 <DropdownLink
                   onClick={hideNav}

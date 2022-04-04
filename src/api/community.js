@@ -11,6 +11,12 @@ export const getCommunity = async (currentUserId = null, userId = null) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Community Data')
+      console.table(res.data.userSets)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -34,6 +40,12 @@ export const getCommunity = async (currentUserId = null, userId = null) => {
 export const getLeaderboard = async () => {
   try {
     const res = await Axios.get(settings.ROUTES.leaderboard)
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Leaderboard Data')
+      console.table(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -62,6 +74,12 @@ export const getUser = async (userId) => {
         userId
       }
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('User Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -107,6 +125,12 @@ export const remixSet = async (token, userId, setId) => {
       }
     )
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Remix Data (Remix)')
+      console.log(res.data.newUser)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -135,6 +159,12 @@ export const getCompetitors = async (userIds) => {
     const res = await Axios.post(settings.ROUTES.competitors, {
       ids: userIds
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Competitor Data')
+      console.table(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -180,6 +210,12 @@ export const updateRemixedSet = async (token, setId, newSet) => {
       }
     )
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Remix Data (Update)')
+      console.log(res.data.newUser)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -218,6 +254,12 @@ export const deleteRemixedSet = async (token, setId) => {
         }
       }
     )
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Remix Data (Delete)')
+      console.log(res.data.newUser)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {

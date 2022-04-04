@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import ToastNotif from '../../contexts/ToastNotifContext'
 import { getLeaderboard } from '../../api/community'
@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 import Spinner from '../../atoms/Loaders/Spinner'
 import useProfilePicture from '../../hooks/useProfilePicture'
 import { truncateNumber } from '../../utils/numbers'
+import ProfilePicture from '../../atoms/ProfilePicture'
 
 function Leaders() {
   const SendToast = useContext(ToastNotif)
@@ -84,40 +85,17 @@ function Leaders() {
               <>
                 {currentLeaderboard.map((user) => {
                   return (
-                    <>
+                    <React.Fragment key={user.userId}>
                       <UserWrapper
                         as={Link}
                         to={`/community/user/${user.userId}`}
-                        key={user.userId}
                         ref={
                           user.userId === userData?._id
                             ? currentUserWrapperRef
                             : null
                         }>
                         <LeftWrapper>
-                          <ProfilePictureWrapper>
-                            <ProfilePictureChooserImg
-                              $offset={
-                                images.find(
-                                  (image) =>
-                                    image.picture.name === user.profilePicture
-                                )?.picture?.offset
-                              }
-                              $scale={
-                                images.find(
-                                  (image) =>
-                                    image.picture.name === user.profilePicture
-                                )?.picture?.scale
-                              }
-                              width="125%"
-                              src={
-                                images.find(
-                                  (image) =>
-                                    image.picture.name === user.profilePicture
-                                )?.src || avatarPlaceholder
-                              }
-                            />
-                          </ProfilePictureWrapper>
+                          <ProfilePicture profilePicture={user.profilePicture}/>
                           <Username
                             $isCurrentUser={user.userId === userData?._id}>
                             {truncateString(user.name, 18)}
@@ -130,7 +108,7 @@ function Leaders() {
                           </UserPrestige>
                         </RightWrapper>
                       </UserWrapper>
-                    </>
+                    </React.Fragment>
                   )
                 })}
               </>
@@ -162,24 +140,6 @@ function Leaders() {
     </>
   )
 }
-
-const ProfilePictureWrapper = styled.div`
-  width: 4em;
-  height: 4em;
-  overflow: hidden;
-  border-radius: 50%;
-  position: relative;
-
-  cursor: pointer;
-`
-
-const ProfilePictureChooserImg = styled.img`
-  position: absolute;
-  top: ${(props) => props.$offset?.y || 0}%;
-  left: ${(props) => props.$offset?.x || 0}%;
-  
-  transform: scale(${(props) => props.$scale || 1});
-`
 
 const SpinnerWrapper = styled.div`
   display: flex;

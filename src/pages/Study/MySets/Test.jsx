@@ -1,24 +1,29 @@
 import styled from 'styled-components'
-import { useParams } from 'react-router-dom'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
 import Account from '../../../contexts/AccountContext'
 import Form from '../../../components/Forms/Form'
 import useForm from '../../../hooks/useForm'
 import Spinner from '../../../atoms/Loaders/Spinner'
 
 import { v4 as uuidv4 } from 'uuid'
+import { expToAdd } from '../../../constants/ranks'
+import { updateUser } from '../../../api/user'
+import ExpNotifications from '../../../components/ExpNotification/ExpNotification'
+
+import fuzzysort from 'fuzzysort'
 
 const TestingSet = () => {
   const { setId } = useParams()
 
-  const { userData, localAuth } = useContext(Account)
+  const { userData, localAuth, setUserData } = useContext(Account)
 
   const [testItems, setTestItems] = useState([])
   const [expNotification, setExpNotification] = useState(null)
 
   const dataIndex = userData?.userSets?.findIndex((set) => set._id === setId)
 
-  const SubmitTest = () => {
+  const SubmitTest = async () => {
     let incorrectAnswers = {}
     testItems.forEach((testItem, testIndex) => {
       if (testItem.type === 'choice') {
@@ -28,17 +33,35 @@ const TestingSet = () => {
         if (values[`q${testIndex + 1}`] !== `c${correctAnswerIndex + 1}`)
           incorrectAnswers[`q${testIndex + 1}`] = true
       } else {
-        if (
-          values[`q${testIndex + 1}`].trim().toLowerCase() !==
+        const fuzzyResult = fuzzysort.single(
+          values[`q${testIndex + 1}`].trim().toLowerCase(),
           testItem.term.trim().toLowerCase()
         )
+        console.log(testItem.term.trim().toLowerCase(), fuzzyResult?.score)
+        if (fuzzyResult?.score <= -3)
           incorrectAnswers[`q${testIndex + 1}`] = true
       }
     })
 
-    const score = Math.floor((testItems.length - Object.keys(incorrectAnswers).length) / testItems.length * 100)
+    const score = Math.floor(
+      ((testItems.length - Object.keys(incorrectAnswers).length) /
+        testItems.length) *
+        100
+    )
+    console.log(score)
 
-    console.log(incorrectAnswers, score)
+    const points = Math.floor((expToAdd() * 2 * score) / 100)
+
+    const updateResult = await updateUser(localAuth, {
+      exp: `+${points}`
+    })
+
+    console.log(updateResult)
+    if (updateResult.status === 200) {
+      setUserData(updateResult.data.newUser)
+
+      setExpNotification(points)
+    }
   }
 
   const {
@@ -54,18 +77,6 @@ const TestingSet = () => {
       let errors = {}
 
       testItems.forEach((testItem, testIndex) => {
-        // if (testItem.type === 'choice') {
-        //   if (values[`q${testIndex + 1}`] || isSubmit) {
-        //     if (!values[`q${testIndex + 1}`])
-        //       errors[`q${testIndex + 1}`] = 'Answer Required'
-        //     else if (values[`q${testIndex + 1}`]?.toString().trim() === '')
-        //       errors[`q${testIndex + 1}`] = 'Answer Required'
-        //   }
-        //   // const correctAnswerIndex = testItem.alternateDefs.findIndex(def => def === testItem.def)
-        //   // if (values[`q${testIndex + 1}`] !== `c${correctAnswerIndex}`) errors[`q${testIndex + 1}`] = 'Incorrect'
-        // } else {
-
-        // }
         if (values[`q${testIndex + 1}`] || isSubmit) {
           if (!values[`q${testIndex + 1}`])
             errors[`q${testIndex + 1}`] = 'Answer Required'
@@ -138,7 +149,7 @@ const TestingSet = () => {
         }
       })
 
-    if (dataIndex >= 0) setTestItems(shuffled)
+    if (dataIndex >= 0) setTestItems(shuffled.slice(0, 15))
     else setTestItems(null)
   }, [data, dataIndex])
 
@@ -226,7 +237,11 @@ const TestingSet = () => {
         })}
         <Form.Button onClick={handleSubmit}>Submit</Form.Button>
       </TestWrapper>
-      <br/>
+      <br />
+      <ExpNotifications
+        expNotification={expNotification}
+        setExpNotification={setExpNotification}
+      />
     </>
   )
 }

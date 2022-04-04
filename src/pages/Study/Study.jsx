@@ -12,7 +12,7 @@ function Study() {
           <Link to="/study/new">
             <SectionButton secondary>Create</SectionButton>
           </Link>
-          <SectionDesc>Want to create a new study set?</SectionDesc>
+          <SectionDesc>Want a create a new study set?</SectionDesc>
         </SectionWrapper>
         <Divider />
         <SectionWrapper>
@@ -20,7 +20,7 @@ function Study() {
             <SectionButton secondary>Practice</SectionButton>
           </Link>
           <SectionDesc>
-            Need to practice a set for an upcoming test?
+            Need some practice for an upcoming test?
           </SectionDesc>
         </SectionWrapper>
       </Container>

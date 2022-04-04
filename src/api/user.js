@@ -16,8 +16,12 @@ export const signup = async (name, email, password) => {
       email,
       password
     })
-
-    console.log(res)
+    
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Signup Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -51,6 +55,12 @@ export const login = async (email, password) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Login Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -82,6 +92,12 @@ export const getUser = async (token) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('User Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -112,6 +128,12 @@ export const updateUser = async (token, newUser = {}) => {
         Authorization: `Bearer ${token}`
       }
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Update User Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -146,6 +168,12 @@ export const addCompetitor = async (token, userId) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Add Competitor Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -177,6 +205,12 @@ export const deleteCompetitor = async (token, userId) => {
         Authorization: `Bearer ${token}`
       }
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Delete Competitor Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -210,6 +244,12 @@ export const createSet = async (token, set) => {
         Authorization: `Bearer ${token}`
       }
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Create Set Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -247,6 +287,12 @@ export const updateSet = async (token, setId, newSet) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Update Set Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -282,6 +328,12 @@ export const deleteSet = async (token, setId) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Delete Set Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -314,6 +366,12 @@ export const createWord = async (token, word) => {
         Authorization: `Bearer ${token}`
       }
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Create Word Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {
@@ -351,6 +409,12 @@ export const updateWord = async (token, wordId, newWord) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Update Word Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -386,6 +450,12 @@ export const deleteWord = async (token, wordId) => {
       }
     })
 
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Delete Word Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
+
     return res
   } catch (error) {
     if (error.response) {
@@ -416,6 +486,12 @@ export const deleteUser = async (token) => {
         Authorization: `Bearer ${token}`
       }
     })
+
+    if (settings.DEV_MODE) {
+      console.groupCollapsed('Delete User Data')
+      console.log(res.data)
+      console.groupEnd()
+    }
 
     return res
   } catch (error) {

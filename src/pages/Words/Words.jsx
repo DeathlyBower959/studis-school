@@ -181,6 +181,9 @@ const WordDef = styled.p`
   word-wrap: break-all;
 
   text-align: center;
+
+  overflow: hidden overlay;
+  width: 100%;
 `
 
 export default Words

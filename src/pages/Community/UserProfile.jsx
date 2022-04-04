@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import styled, { ThemeContext } from 'styled-components'
 import { getUser } from '../../api/community'
@@ -22,7 +22,7 @@ import { addCompetitor, deleteCompetitor } from '../../api/user'
 import ToastNotif from '../../contexts/ToastNotifContext'
 import VoteArrow from '../../assets/svg/VoteArrow'
 import { MOBILE } from '../../constants/sizes'
-
+import ProfilePicture from '../../atoms/ProfilePicture'
 
 function UserProfile() {
   const { userId } = useParams()
@@ -35,14 +35,14 @@ function UserProfile() {
 
   const { imgErrors, imgLoadings, images } = useProfilePicture()
 
-  const GetUserData = async () => {
+  const GetUserData = useCallback(async () => {
     const getUserResult = await getUser(userId)
     if (getUserResult.status === 200) return setCurrentUser(getUserResult.data)
 
     setCurrentUser({})
-  }
+  }, [userId])
 
-  const AddCompetitor = async () => {
+  const AddCompetitor = useCallback(async () => {
     const AddCompetitorPromise = new Promise(async (resolve, reject) => {
       const competitorResult = await addCompetitor(localAuth, userId)
 
@@ -61,8 +61,9 @@ function UserProfile() {
       },
       'promise'
     )
-  }
-  const RemoveCompetitor = async () => {
+  }, [localAuth, userId])
+
+  const RemoveCompetitor = useCallback(async () => {
     const RemoveCompetitorPromise = new Promise(async (resolve, reject) => {
       const competitorResult = await deleteCompetitor(localAuth, userId)
 
@@ -81,7 +82,7 @@ function UserProfile() {
       },
       'promise'
     )
-  }
+  }, [localAuth, userId])
 
   useEffect(() => {
     GetUserData()
@@ -124,30 +125,11 @@ function UserProfile() {
 
         <RightWrapper>
           <UserBiography>
-            {sanitize(currentUser.biography).__html ||
+            {sanitize(currentUser.biography.trim()).__html ||
               "Hmm, seems like I don't have a unique biography yet! Just know that I am very amazing, creative, and overall awesome person!"}
           </UserBiography>
           <UserProfileWrapper>
-            <ProfilePictureWrapper>
-              <ProfilePictureChooserImg
-                $offset={
-                  images.find(
-                    (image) => image.picture.name === currentUser.profilePicture
-                  )?.picture?.offset || 0.85
-                }
-                $scale={
-                  images.find(
-                    (image) => image.picture.name === currentUser.profilePicture
-                  )?.picture?.scale || {x: -12, y:-12}
-                }
-                width="125%"
-                src={
-                  images.find(
-                    (image) => image.picture.name === currentUser.profilePicture
-                  )?.src || avatarPlaceholder
-                }
-              />
-            </ProfilePictureWrapper>
+            <ProfilePicture profilePicture={currentUser.profilePicture}/>
           </UserProfileWrapper>
         </RightWrapper>
 
@@ -179,7 +161,11 @@ function UserProfile() {
                 id={set._id}
                 key={uuidv4()}
                 as={Link}
-                to={userData._id === currentUser.userId ? `/study/sets/view/${set._id}` : `/community/${currentUser.userId}/sets/${set._id}`}>
+                to={
+                  userData._id === currentUser.userId
+                    ? `/study/sets/view/${set._id}`
+                    : `/community/${currentUser.userId}/sets/${set._id}`
+                }>
                 <RecentStudyTitle>{set.title}</RecentStudyTitle>
                 <RecentStudyDescription>
                   {truncateString(set.description, 75, false)}
@@ -188,8 +174,8 @@ function UserProfile() {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote/>
-                    <Upvote/>
+                    <Downvote isdownvoted={set.downvotes.includes(userData._id)}/>
+                    <Upvote isupvoted={set.upvotes.includes(userData._id)}/>
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
@@ -311,7 +297,7 @@ const VoteContainer = styled.div`
   align-items: center;
   gap: 0.3em;
 
-  background-color: ${props => props.theme.secondaryBackground};
+  background-color: ${(props) => props.theme.secondaryBackground};
 `
 
 const UpvoteCount = styled.p`
@@ -331,24 +317,6 @@ const DownvoteCount = styled.p`
 const Downvote = styled(VoteArrow)``
 
 // User Data
-
-const ProfilePictureWrapper = styled.div`
-  width: 4em;
-  height: 4em;
-  overflow: hidden;
-  border-radius: 50%;
-  position: relative;
-
-  cursor: pointer;
-`
-
-const ProfilePictureChooserImg = styled.img`
-  position: absolute;
-  top: ${(props) => props.$offset?.y || 0}%;
-  left: ${(props) => props.$offset?.x || 0}%;
-
-  transform: scale(${(props) => props.$scale || 1});
-`
 
 const UserInformationWrapper = styled.div`
   margin: 0 auto;

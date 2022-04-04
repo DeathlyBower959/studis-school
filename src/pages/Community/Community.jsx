@@ -15,6 +15,7 @@ import { CardContainer } from '../../components/Cards/WordCard'
 import useProfilePicture from '../../hooks/useProfilePicture'
 import { truncateNumber } from '../../utils/numbers'
 import VoteArrow from '../../assets/svg/VoteArrow'
+import ProfilePicture from '../../atoms/ProfilePicture'
 
 function Community() {
   const { userData } = useContext(Account)
@@ -73,29 +74,7 @@ function Community() {
                     as={Link}
                     to={`/community/user/${user.userId}`}>
                     <LeftWrapper>
-                      <ProfilePictureWrapper>
-                        <ProfilePictureChooserImg
-                          $offset={
-                            images.find(
-                              (image) =>
-                                image.picture.name === user.profilePicture
-                            )?.picture?.offset || { x: -12, y: -12 }
-                          }
-                          $scale={
-                            images.find(
-                              (image) =>
-                                image.picture.name === user.profilePicture
-                            )?.picture?.scale || 0.85
-                          }
-                          width="125%"
-                          src={
-                            images.find(
-                              (image) =>
-                                image.picture.name === user.profilePicture
-                            )?.src || avatarPlaceholder
-                          }
-                        />
-                      </ProfilePictureWrapper>
+                      <ProfilePicture profilePicture={user.profilePicture}/>
                       <Username $isCurrentUser={user.userId === userData?._id}>
                         {truncateString(user.name, 18)}
                       </Username>
@@ -134,8 +113,8 @@ function Community() {
 
                     <VoteContainer>
                       <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                      <Downvote />
-                      <Upvote />
+                      <Downvote isdownvoted={set.downvotes.includes(userData._id)}/>
+                      <Upvote isupvoted={set.upvotes.includes(userData._id)}/>
                       <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                     </VoteContainer>
                   </SetContainer>
@@ -151,24 +130,6 @@ function Community() {
     </PageWrapper>
   )
 }
-
-const ProfilePictureWrapper = styled.div`
-  width: 4em;
-  height: 4em;
-  overflow: hidden;
-  border-radius: 50%;
-  position: relative;
-
-  cursor: pointer;
-`
-
-const ProfilePictureChooserImg = styled.img`
-  position: absolute;
-  top: ${(props) => props.$offset?.y || 0}%;
-  left: ${(props) => props.$offset?.x || 0}%;
-
-  transform: scale(${(props) => props.$scale || 1});
-`
 
 const WordTitle = styled.p`
   font-size: 1.75em;
