@@ -92,7 +92,7 @@ const Landing = () => {
     const competitors = await getCompetitors(userData?.competitors)
     if (competitors?.data) setCurrentCompetitors(competitors.data)
   }, [userData])
-  
+
   const refreshLeaderboard = useCallback(async () => {
     const leaderboard = await getLeaderboard()
     if (leaderboard?.data)
@@ -184,7 +184,6 @@ const Landing = () => {
       </PageWrapper>
     )
 
-
   // Means the user has an account
   return (
     <PageWrapper>
@@ -200,7 +199,10 @@ const Landing = () => {
                   Place: {addNumberSuffix(currentLeaderboard?.place)}
                 </StatData>
                 <StatData>
-                  Exp: {truncateNumber(currentLeaderboard?.data?.exp, 2)}
+                  Exp: {truncateNumber(currentLeaderboard?.data?.exp?.reduce(
+                      (prev, current) => prev + current.amount,
+                      0
+                    ), 2)}
                 </StatData>
                 <StatData>
                   Prestige: {currentLeaderboard?.data?.prestiges}
@@ -208,14 +210,20 @@ const Landing = () => {
                 <StatData>
                   Title:
                   <UserTitle
-                    exp={currentLeaderboard?.data?.exp}
+                    exp={currentLeaderboard?.data?.exp?.reduce(
+                      (prev, current) => prev + current.amount,
+                      0
+                    )}
                     style={{ marginTop: '-0.25em ' }}
                   />
                 </StatData>
               </>
             )}
           </StatDataContainer>
-          <ProfilePicture height='7em' profilePicture={userData.profilePicture}/>
+          <ProfilePicture
+            height="7em"
+            profilePicture={userData.profilePicture}
+          />
         </StatContainer>
         <ChartContainer>
           <ResponsiveContainer width="100%">
@@ -253,7 +261,13 @@ const Landing = () => {
                     key={uuidv4()}>
                     <CompetitorName>{comp.name}</CompetitorName>
                     <CompetitorData>
-                      Exp: {truncateNumber(comp.exp)}
+                      Exp:{' '}
+                      {truncateNumber(
+                        comp.exp?.reduce(
+                          (prev, current) => prev + current.amount,
+                          0
+                        )
+                      )}
                     </CompetitorData>
                     <CompetitorData>Prestige: {comp.prestiges}</CompetitorData>
                     <CompetitorData>
@@ -275,7 +289,10 @@ const Landing = () => {
         </CompetitorContainer>
       </BlockContainer>
 
-      {userData.exp >= 1000000 && (
+      {userData.exp.reduce(
+        (prev, current) => prev + current.amount,
+        0
+      ) >= 1000000 && (
         <PrestigeButton onClick={PrestigeUser}>Prestige Now</PrestigeButton>
       )}
 
@@ -297,8 +314,10 @@ const Landing = () => {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote isdownvoted={set.downvotes.includes(userData._id)}/>
-                    <Upvote isupvoted={set.upvotes.includes(userData._id)}/>
+                    <Downvote
+                      isdownvoted={set.downvotes.includes(userData._id)}
+                    />
+                    <Upvote isupvoted={set.upvotes.includes(userData._id)} />
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
@@ -467,7 +486,7 @@ const CompetitorInnerContainer = styled.div`
   gap: 1em;
 `
 
-const CompetitorContentContainer = styled.div` 
+const CompetitorContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

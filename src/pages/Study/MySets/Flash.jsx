@@ -38,7 +38,7 @@ const FlashSet = () => {
     const expInterval = setInterval(async () => {
       if (lastInteracted.current + expDelay >= Date.now()) {
         const newExp = Math.floor(
-          expToAdd() * calculateRank(userData.exp).multiplier
+          expToAdd() * calculateRank(userData.exp.reduce((prev, current) => prev + current.amount, 0)).multiplier
         );
         const updateUserResult = await updateUser(localAuth, {
           exp: `+${newExp}`

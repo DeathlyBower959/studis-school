@@ -1,17 +1,17 @@
 import styled from 'styled-components'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from 'react'
 import Account from '../../../contexts/AccountContext'
 import Form from '../../../components/Forms/Form'
 import useForm from '../../../hooks/useForm'
 import Spinner from '../../../atoms/Loaders/Spinner'
 
-import { v4 as uuidv4 } from 'uuid'
 import { expToAdd } from '../../../constants/ranks'
 import { updateUser } from '../../../api/user'
 import ExpNotifications from '../../../components/ExpNotification/ExpNotification'
 
 import fuzzysort from 'fuzzysort'
+import { calculateRank } from '../../../utils/ranking'
 
 const TestingSet = () => {
   const { setId } = useParams()
@@ -19,6 +19,7 @@ const TestingSet = () => {
   const { userData, localAuth, setUserData } = useContext(Account)
 
   const [testItems, setTestItems] = useState([])
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [expNotification, setExpNotification] = useState(null)
 
   const dataIndex = userData?.userSets?.findIndex((set) => set._id === setId)
@@ -37,7 +38,6 @@ const TestingSet = () => {
           values[`q${testIndex + 1}`].trim().toLowerCase(),
           testItem.term.trim().toLowerCase()
         )
-        console.log(testItem.term.trim().toLowerCase(), fuzzyResult?.score)
         if (fuzzyResult?.score <= -3)
           incorrectAnswers[`q${testIndex + 1}`] = true
       }
@@ -48,17 +48,20 @@ const TestingSet = () => {
         testItems.length) *
         100
     )
-    console.log(score)
 
-    const points = Math.floor((expToAdd() * 2 * score) / 100)
+    const points =
+      Math.floor((expToAdd() * score) / 100) *
+      calculateRank(
+        userData.exp.reduce((prev, current) => prev + current.amount, 0)
+      ).multiplier
 
     const updateResult = await updateUser(localAuth, {
       exp: `+${points}`
     })
 
-    console.log(updateResult)
     if (updateResult.status === 200) {
       setUserData(updateResult.data.newUser)
+      setIsSubmitted(true)
 
       setExpNotification(points)
     }

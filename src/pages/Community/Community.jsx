@@ -80,7 +80,7 @@ function Community() {
                       </Username>
                     </LeftWrapper>
                     <RightWrapper>
-                      <UserEXP>EXP: {truncateNumber(user.exp, 2)}</UserEXP>
+                      <UserEXP>EXP: {truncateNumber(user.exp.reduce((prev, current) => prev + current.amount, 0), 2)}</UserEXP>
                       <UserPrestige>Prestige: {user.prestiges}</UserPrestige>
                     </RightWrapper>
                   </UserWrapper>

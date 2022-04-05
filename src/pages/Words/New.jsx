@@ -52,8 +52,7 @@ function CreateWord() {
     {
       word: '',
       type: 'none',
-      def: '',
-      isPublic: false
+      def: ''
     },
     {
       handleChange: (e) => {
@@ -106,12 +105,6 @@ function CreateWord() {
           })}
         </TagSelect>
         {errors.type && <ErrorMessage>{errors.type}</ErrorMessage>}
-        <Checkbox
-          labelText="Public"
-          name="isPublic"
-          checked={values.isPublic}
-          onChange={handleChange}
-        />
         <CreateButton>Create</CreateButton>
       </FormContainer>
     </>

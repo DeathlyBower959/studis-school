@@ -110,11 +110,16 @@ function UserProfile() {
     <>
       <HeaderWrapper>
         <Header>{currentUser.name}</Header>
-        <UserTitle exp={currentUser.exp} />
+        <UserTitle
+          exp={currentUser.exp.reduce(
+            (prev, current) => prev + current.amount,
+            0
+          )}
+        />
       </HeaderWrapper>
       <UserInformationWrapper>
         <LeftWrapper>
-          <UserEXP>Exp: {truncateNumber(currentUser.exp, 2)}</UserEXP>
+          <UserEXP>Exp: {truncateNumber(currentUser.exp.reduce((prev, current) => prev + current.amount, 0), 2)}</UserEXP>
           <UserLeaderboard>
             Leaderboard: {addNumberSuffix(currentUser.leaderboard)}
           </UserLeaderboard>
@@ -129,7 +134,7 @@ function UserProfile() {
               "Hmm, seems like I don't have a unique biography yet! Just know that I am very amazing, creative, and overall awesome person!"}
           </UserBiography>
           <UserProfileWrapper>
-            <ProfilePicture profilePicture={currentUser.profilePicture}/>
+            <ProfilePicture profilePicture={currentUser.profilePicture} />
           </UserProfileWrapper>
         </RightWrapper>
 
@@ -174,8 +179,10 @@ function UserProfile() {
                 {set.isPublic && (
                   <VoteContainer>
                     <DownvoteCount>{set.downvotes?.length}</DownvoteCount>
-                    <Downvote isdownvoted={set.downvotes.includes(userData._id)}/>
-                    <Upvote isupvoted={set.upvotes.includes(userData._id)}/>
+                    <Downvote
+                      isdownvoted={set.downvotes.includes(userData._id)}
+                    />
+                    <Upvote isupvoted={set.upvotes.includes(userData._id)} />
                     <UpvoteCount>{set.upvotes?.length}</UpvoteCount>
                   </VoteContainer>
                 )}
