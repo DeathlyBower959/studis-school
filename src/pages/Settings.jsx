@@ -180,14 +180,16 @@ const Settings = () => {
     )
   }
 
-  const handleTextboxChange = (e) => {
+  const handleInputChange = (e) => {
     setNewData((prev) => {
       setErrors((prev) => {
         return { ...prev, [e.target.name]: null }
       })
+
       return {
         ...prev,
-        [e.target.name]: e.target.value
+        [e.target.name]:
+          e.target.type === 'checkbox' ? e.target.checked : e.target.value
       }
     })
   }
@@ -287,7 +289,7 @@ const Settings = () => {
               <SettingTextbox
                 maxLength="30"
                 name="name"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.name || ''}
               />
             </InputGroup>
@@ -295,7 +297,7 @@ const Settings = () => {
               <SettingTitle>Email</SettingTitle>
               <SettingTextbox
                 name="email"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.email || ''}
               />
             </InputGroup>
@@ -304,7 +306,7 @@ const Settings = () => {
               <SettingTextarea
                 maxLength="190"
                 name="biography"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.biography || ''}
               />
               <CharCounter
@@ -341,7 +343,7 @@ const Settings = () => {
               <SettingTitle>Theme</SettingTitle>
               <ThemeChooser
                 onChange={updateTheme}
-                value={userData?.settings?.selectedTheme}>
+                value={userData?.settings?.selectedTheme || ''}>
                 {themes.map((theme) => {
                   return (
                     <option value={theme.themeID} key={uuidv4()}>
@@ -392,7 +394,7 @@ const Settings = () => {
               <SettingTextbox
                 name="currentPassword"
                 type="password"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.currentPassword || ''}
               />
               {errors.currentPassword && (
@@ -403,7 +405,7 @@ const Settings = () => {
               <SettingTextbox
                 name="newPassword"
                 type="password"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.newPassword || ''}
               />
               {errors.newPassword && (
@@ -414,7 +416,7 @@ const Settings = () => {
               <SettingTextbox
                 name="confirmNewPassword"
                 type="password"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.confirmNewPassword || ''}
               />
               {errors.confirmNewPassword && (
@@ -433,7 +435,7 @@ const Settings = () => {
               <SettingTextbox
                 name="deleteAccPassConfirm"
                 type="password"
-                onChange={handleTextboxChange}
+                onChange={handleInputChange}
                 value={newData?.deleteAccPassConfirm || ''}
               />
               {errors.deleteAccPassConfirm && (
@@ -561,6 +563,7 @@ const SettingDivider = styled.div`
 
 const SettingTextbox = styled(Form.Text)``
 const SettingTextarea = styled(Form.Textarea)``
+const SettingCheckbox = styled(Form.Check)``
 
 const SettingTitle = styled.p`
   margin: 0 0 0.3em 0;

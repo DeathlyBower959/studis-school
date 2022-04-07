@@ -3,14 +3,20 @@
   "name": "",
   "email": "",
   "password": "",
-  "exp": 0,
-  "prestiges": 0,
+  "exp": [
+    {
+      "amount": 1,
+      "_id": ObjectId("624cca1c0327ed859c4dc0d2"),
+      "dateEarned": ISODate("2022-04-05T23:00:44.713Z")
+    }
+  ],
+  "prestiges": 1,
+  "profilePicture": "",
+  "competitors": [""],
   "settings": {
     "selectedTheme": "",
-    "_id": ""
+    "_id": ObjectId("623cd29b34965dd9395cb9e9")
   },
-  "competitors": [""],
-  "isVerified": false,
   "savedSets": [
     {
       "_id": "",
@@ -23,7 +29,8 @@
           "def": ""
         }
       ],
-      "createdAt": ISODate("2022-03-19T02:47:07.232Z")
+      "ownerId": "",
+      "createdAt": ISODate("2022-04-04T17:47:42.135Z")
     }
   ],
   "userSets": [
@@ -38,25 +45,39 @@
           "def": ""
         }
       ],
+      "createdAt": ISODate("2022-03-24T20:22:31.271Z"),
+      "isPublic": true,
+      "upvotes": [""],
+      "downvotes": [""]
+    },
+    {
+      "_id": "",
+      "title": "",
+      "description": "",
+      "terms": [
+        {
+          "_id": "",
+          "term": "",
+          "def": ""
+        }
+      ],
+      "createdAt": ISODate("2022-04-04T17:48:25.848Z"),
       "isPublic": false,
-      "upvotes": 3,
-      "downvotes": 1,
-      "createdAt": ISODate("2022-03-19T02:47:07.232Z")
+      "upvotes": [""],
+      "downvotes": [""]
     }
   ],
   "savedWords": [
     {
       "_id": "",
       "word": "",
-      "type": "Adverb",
+      "type": "",
       "def": "",
-      "isPublic": false,
-      "upvotes": 3,
-      "downvotes": 1,
-      "createdAt": ISODate("2022-03-19T02:47:07.232Z")
+      "createdAt": ISODate("2022-04-01T22:48:17.799Z")
     }
   ],
-  "createdAt": ISODate("2022-03-19T02:47:07.588Z"),
-  "updatedAt": ISODate("2022-03-19T02:50:06.232Z"),
-  "__v": 0
+  "createdAt": ISODate("2022-03-24T20:20:43.937Z"),
+  "updatedAt": ISODate("2022-04-05T23:38:56.185Z"),
+  "biography": "",
+  "__v": 1
 }

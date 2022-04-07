@@ -13,7 +13,7 @@ export const getCommunity = async (currentUserId = null, userId = null) => {
 
     if (settings.DEV_MODE) {
       console.groupCollapsed('Community Data')
-      console.table(res.data.userSets)
+      console.table(res.data)
       console.groupEnd()
     }
 
@@ -127,7 +127,7 @@ export const remixSet = async (token, userId, setId) => {
 
     if (settings.DEV_MODE) {
       console.groupCollapsed('Remix Data (Remix)')
-      console.log(res.data.newUser)
+      console.log(res.data)
       console.groupEnd()
     }
 
@@ -212,7 +212,7 @@ export const updateRemixedSet = async (token, setId, newSet) => {
 
     if (settings.DEV_MODE) {
       console.groupCollapsed('Remix Data (Update)')
-      console.log(res.data.newUser)
+      console.log(res.data)
       console.groupEnd()
     }
 
@@ -257,7 +257,7 @@ export const deleteRemixedSet = async (token, setId) => {
 
     if (settings.DEV_MODE) {
       console.groupCollapsed('Remix Data (Delete)')
-      console.log(res.data.newUser)
+      console.log(res.data)
       console.groupEnd()
     }
 

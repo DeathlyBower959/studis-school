@@ -12,7 +12,7 @@ const TextboxInput = styled.input`
   caret-color: ${(props) => props.theme.muted};
   padding: 0px 10px;
   border-bottom: 1.4px solid transparent;
-  transition: border 200ms ease;
+  transition: border 200ms ease, filter 500ms ease;
   font-size: 1em;
   &::placeholder {
     color: ${(props) => props.theme.muted};
@@ -24,7 +24,12 @@ const TextboxInput = styled.input`
     outline: none;
     border-bottom: 3px solid ${(props) => props.theme.accent};
   }
+  
   background-color: ${(props) => props.theme.inputBackground};
+
+  &:disabled {
+    filter: brightness(0.8);
+  }
 
   margin-left: 7px;
 `

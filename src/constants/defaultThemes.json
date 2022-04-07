@@ -34,7 +34,7 @@
       "muted": "#a0a0a0",
       "secondaryMuted": "#808080",
 
-      "outline": "#5d5d5d",
+      "outline": "#v",
 
       "disabledText": "#545454",
 
@@ -116,7 +116,7 @@
       "secondaryMuted": "#7a8279",
       "disabledText": "#4e544f",
 
-      "outline": "red",
+      "outline": "#535e53",
 
       "error": "#ff5252",
       "success": "#23c923"

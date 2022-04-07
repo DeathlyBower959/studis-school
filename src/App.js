@@ -421,6 +421,22 @@ const GlobalStyle = createGlobalStyle`
   .Toastify__close-button {
     color: ${(props) => props.theme.foreground} !important;  
   }
+
+  .recharts-tooltip-wrapper .recharts-default-tooltip {
+    background-color: ${(props) => props.theme.tertiaryBackground} !important;
+    border: 1px solid ${(props) => props.theme.outline} !important;
+    border-radius: 8px;
+  }
+
+  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label
+  {
+    color: ${(props) => props.theme.secondaryForeground} !important;
+  }
+
+  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item-list .recharts-tooltip-item
+ {
+   color: ${(props) => props.theme.muted} !important;
+ }
 `
 
 export default App

@@ -29,11 +29,8 @@ function UserProfile() {
 
   const { localAuth, userData, setUserData } = useContext(Account)
   const SendToast = useContext(ToastNotif)
-  const theme = useContext(ThemeContext)
 
   const [currentUser, setCurrentUser] = useState()
-
-  const { imgErrors, imgLoadings, images } = useProfilePicture()
 
   const GetUserData = useCallback(async () => {
     const getUserResult = await getUser(userId)
@@ -86,7 +83,7 @@ function UserProfile() {
 
   useEffect(() => {
     GetUserData()
-  }, [])
+  }, [userId])
 
   if (!currentUser)
     return (

@@ -20,3 +20,33 @@ export const truncateString = (str, n, useWordBoundary) => {
       : subString) + ' ...'
   )
 }
+
+export const hammingDistance = (str1, str2) => {
+  if (!str1 || !str2) return 10
+  
+  let dist = 0
+
+  str1 = str1.toLowerCase()
+  str2 = str2.toLowerCase()
+  for (let i = 0, j = Math.max(str1.length, str2.length); i < j; i++) {
+    if (!str1[i] || !str2[i] || str1[i] !== str2[i]) {
+      dist++
+    }
+  }
+  return dist
+}
+
+export const objectByString = (o, s) => {
+  s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+  s = s.replace(/^\./, '');           // strip a leading dot
+  var a = s.split('.');
+  for (var i = 0, n = a.length; i < n; ++i) {
+      var k = a[i];
+      if (k in o) {
+          o = o[k];
+      } else {
+          return;
+      }
+  }
+  return o;
+}

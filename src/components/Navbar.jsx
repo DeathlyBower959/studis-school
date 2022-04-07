@@ -1,35 +1,106 @@
-import styled, { ThemeContext } from "styled-components";
-import { useContext, useState } from "react";
-import { Turn as Hamburger } from "hamburger-react";
-import { Link as ReactLink } from "react-router-dom";
+import styled, { ThemeContext } from 'styled-components'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { Turn as Hamburger } from 'hamburger-react'
+import { Link as ReactLink } from 'react-router-dom'
 
 // Atoms
-import Spinner from "../atoms/Loaders/Spinner";
-import Link from "../atoms/Navbar/Link";
-import Account from "../contexts/AccountContext";
-import Dropdown from "../atoms/Navbar/Dropdown";
-import DropdownLink from "../atoms/Navbar/DropdownLink";
-import { MOBILE } from "../constants/sizes";
-import useProfilePicture from "../hooks/useProfilePicture";
+import Spinner from '../atoms/Loaders/Spinner'
+import Link from '../atoms/Navbar/Link'
+import Account from '../contexts/AccountContext'
+import Dropdown from '../atoms/Navbar/Dropdown'
+import DropdownLink from '../atoms/Navbar/DropdownLink'
+import { MOBILE } from '../constants/sizes'
 
-import AppLogo2 from "../assets/svg/Logo";
+import AppLogo2 from '../assets/svg/Logo'
+import SearchBar from '../atoms/SearchBar'
+
+import { getCommunity } from '../api/community'
 
 const Navbar = () => {
-  const { isLoggedIn, userData, AuthLogout } = useContext(Account);
-  const theme = useContext(ThemeContext);
+  const { isLoggedIn, userData, AuthLogout } = useContext(Account)
+  const theme = useContext(ThemeContext)
 
-  const { imgLoadings, imgErrors, images } = useProfilePicture();
+  const [searchData, setSearchData] = useState([])
+  const [communityData, setCommunityData] = useState({
+    userSets: [],
+    users: []
+  })
 
-  const userLoggedInState = isLoggedIn();
-  const [isNavShown, setShowNav] = useState(false);
+  const userLoggedInState = isLoggedIn()
+  const [isNavShown, setShowNav] = useState(false)
 
   const hideNav = () => {
-    setShowNav(false);
-  };
+    setShowNav(false)
+  }
+
+  const RefreshSearch = useCallback(async () => {
+    if (communityData?.users?.length <= 0 && userData && userData !== 'none') {
+      const cData = await getCommunity(userData._id)
+      if (cData.status === 200) {
+        setCommunityData(cData?.data)
+      }
+    }
+
+    let userSets = userData?.userSets || []
+    let savedSets = userData?.savedSets || []
+    let savedWords = userData?.savedWords || []
+
+    if (communityData) {
+      ;[...communityData.users].forEach((user, index) => {
+        communityData.users[index] = {
+          ...user,
+          path: `/community/user/${user._id}`,
+          location: 'Users'
+        }
+      })
+      ;[...communityData.userSets].forEach((set, index) => {
+        communityData.userSets[index] = {
+          ...set,
+          path: `/community/${set.userId}/sets/${set._id}`,
+          location: 'Community'
+        }
+      })
+    }
+
+    ;[...userSets].forEach((set, index) => {
+      userSets[index] = {
+        ...set,
+        path: `/study/sets/view/${set._id}`,
+        location: 'Sets'
+      }
+    })
+    ;[...savedSets].forEach((set, index) => {
+      savedSets[index] = {
+        ...set,
+        path: `/study/saved/view/${set._id}`,
+        location: 'Saved Sets'
+      }
+    })
+    ;[...savedWords].forEach((word, index) => {
+      savedWords[index] = {
+        ...word,
+        path: `/words`,
+        location: 'Words'
+      }
+    })
+
+    setSearchData([
+      ...userSets,
+      ...savedSets,
+      ...savedWords,
+      ...communityData?.users,
+      ...communityData?.userSets
+    ])
+  }, [communityData, userData])
+
+  useEffect(() => {
+    RefreshSearch()
+  }, [userData, RefreshSearch])
 
   return (
     <>
       <NavSpacer />
+
       <NavWrapper $isNavShown={isNavShown} className="noSelect">
         <LeftDiv>
           <AppLogo tabIndex="-1" to="/">
@@ -53,11 +124,14 @@ const Navbar = () => {
           )}
           {userLoggedInState === 1 && (
             <>
+              <SearchBar
+                placeholder="Search users, sets, or words..."
+                keys={['title', 'word', 'name']}
+                data={searchData}
+                onClose={hideNav}
+              />
               {/* title={truncateString(userData.name || 'Account', 20)} */}
-              <Dropdown
-                tb="0"
-                img={userData.profilePicture}
-              >
+              <Dropdown tb="0" img={userData.profilePicture}>
                 <DropdownLink
                   onClick={hideNav}
                   text="Settings"
@@ -66,8 +140,8 @@ const Navbar = () => {
                 <DropdownLink
                   tabIndex="0"
                   onClick={() => {
-                    hideNav();
-                    AuthLogout();
+                    hideNav()
+                    AuthLogout()
                   }}
                   text="Log Out"
                 />
@@ -93,12 +167,11 @@ const Navbar = () => {
           tabIndex="0"
           onKeyUp={(e) => {
             if (e.keyCode === 13) {
-              e.preventDefault();
+              e.preventDefault()
 
-              setShowNav((prev) => !prev);
+              setShowNav((prev) => !prev)
             }
-          }}
-        >
+          }}>
           <Hamburger
             toggled={isNavShown}
             toggle={setShowNav}
@@ -108,23 +181,23 @@ const Navbar = () => {
         </HamburgerWrapper>
       </MobileNavWrapper>
     </>
-  );
-};
+  )
+}
 
 const SpinnerWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const NavSpacer = styled.div`
   width: 100%;
   height: 3.5rem;
-`;
+`
 
 const HamburgerWrapper = styled.div`
   pointer-events: all;
-`;
+`
 
 const AppLogo = styled(ReactLink)`
   padding-left: 0.3em;
@@ -133,14 +206,14 @@ const AppLogo = styled(ReactLink)`
   pointer-events: all;
   user-select: none;
   color: ${(props) => props.theme.accent};
-  margin-left: ${(props) => (props.$isNavShown ? "-4em" : "0")};
+  margin-left: ${(props) => (props.$isNavShown ? '-4em' : '0')};
   text-decoration: none;
   display: block;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     margin-top: 0.3em;
-    display: ${(props) => (props.$alwaysShow ? "block" : "none")};
+    display: ${(props) => (props.$alwaysShow ? 'block' : 'none')};
   }
-`;
+`
 
 const MobileAppLogo = styled(ReactLink)`
   padding: 0.5em;
@@ -162,14 +235,14 @@ const MobileAppLogo = styled(ReactLink)`
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
   }
-`;
+`
 const VerticalSeparator = styled.div`
   width: 1px;
   height: 100%;
   margin-left: 1em;
   margin-right: 0.5em;
   background-color: ${(props) => props.theme.navbar.outline};
-`;
+`
 
 const MobileNavBackground = styled.div`
   position: fixed;
@@ -186,7 +259,7 @@ const MobileNavBackground = styled.div`
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
   }
-`;
+`
 
 const MobileNavWrapper = styled.div`
   position: fixed;
@@ -204,14 +277,14 @@ const MobileNavWrapper = styled.div`
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: flex;
   }
-`;
+`
 
 const NavLink = styled(Link)`
   user-select: none;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     margin: 0.5em;
   }
-`;
+`
 
 const LeftDiv = styled.div`
   display: flex;
@@ -219,7 +292,7 @@ const LeftDiv = styled.div`
     flex-direction: column;
     margin-bottom: 0.5em;
   }
-`;
+`
 
 const Separator = styled.hr`
   display: none;
@@ -227,7 +300,7 @@ const Separator = styled.hr`
     display: block;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
   }
-`;
+`
 
 const RightDiv = styled.div`
   display: flex;
@@ -235,7 +308,7 @@ const RightDiv = styled.div`
     flex-direction: column;
     margin-top: 0.5em;
   }
-`;
+`
 
 const NavWrapper = styled.div`
   position: fixed;
@@ -250,12 +323,12 @@ const NavWrapper = styled.div`
   padding: 0.5rem;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     transition: left 600ms ease-in-out;
-    ${(props) => (props.$isNavShown ? "left: 0;" : "left: -100vw;")}
+    ${(props) => (props.$isNavShown ? 'left: 0;' : 'left: -100vw;')}
     display: block;
     position: fixed;
     align-items: center;
     height: 100%;
   }
-`;
+`
 
-export default Navbar;
+export default Navbar

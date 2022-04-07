@@ -44,22 +44,26 @@ const StyledCheckbox = styled.div`
 `
 
 const CheckboxText = styled.span`
-  color: ${(props) => props.theme.secondaryForeground};
+  color: ${(props) =>
+    props.$disabled
+      ? props.theme.secondaryMuted
+      : props.theme.secondaryForeground};
   user-select: none;
+  margin-left: 8px;
 `
 
-const Checkbox = ({ checked, labelText = '', ...props }) => {
+const Checkbox = ({ checked, labelText = '', disabled, ...props }) => {
   return (
     <label>
       <CheckboxContainer>
-        <HiddenCheckbox checked={checked} {...props} />
+        <HiddenCheckbox checked={checked} disabled={disabled} {...props} />
         <StyledCheckbox checked={checked}>
           <Icon viewBox="0 0 24 24">
             <polyline points="20 6 9 17 4 12" />
           </Icon>
         </StyledCheckbox>
       </CheckboxContainer>
-      <CheckboxText style={{ marginLeft: 8 }}>{labelText}</CheckboxText>
+      <CheckboxText $disabled={disabled}>{labelText}</CheckboxText>
     </label>
   )
 }

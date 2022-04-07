@@ -6,7 +6,15 @@ import Spinner from '../atoms/Loaders/Spinner'
 import UserTitle from '../components/UserTitle'
 
 // Recharts
-import { LineChart, Line, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import {
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Legend,
+  Tooltip
+} from 'recharts'
 
 // Components
 import {
@@ -37,42 +45,36 @@ import LeftCompetitorArrow from '../assets/svg/LeftCompetitorArrow'
 import RightCompetitorArrow from '../assets/svg/RightCompetitorArrow'
 import VoteArrow from '../assets/svg/VoteArrow'
 import ProfilePicture from '../atoms/ProfilePicture'
+import moment from 'moment'
 
 // FAKE DATA
 const data = [
   {
     day: 'Sun',
-    time: 4,
     points: 88
   },
   {
     day: 'Mon',
-    time: 20,
     points: 344
   },
   {
     day: 'Tue',
-    time: 5,
     points: 102
   },
   {
     day: 'Wed',
-    time: 15,
     points: 288
   },
   {
     day: 'Thu',
-    time: 10,
     points: 153
   },
   {
     day: 'Fri',
-    time: 5,
     points: 60
   },
   {
     day: 'Sat',
-    time: 0,
     points: 0
   }
 ]
@@ -84,8 +86,7 @@ const Landing = () => {
 
   const [currentCompetitors, setCurrentCompetitors] = useState([])
   const [currentLeaderboard, setCurrentLeaderboard] = useState([])
-
-  const { imgLoadings, imgErrors, images } = useProfilePicture()
+  const [chartData, setChartData] = useState([])
 
   const refreshCompetitors = useCallback(async () => {
     if (userData?.competitors?.length === 0) return setCurrentCompetitors([])
@@ -116,6 +117,66 @@ const Landing = () => {
     refreshCompetitors()
     refreshLeaderboard()
   }, [userData, refreshCompetitors, refreshLeaderboard])
+
+  useEffect(() => {
+    if (!userData?.exp) return
+
+    const startOfWeek = moment().startOf('week').toDate()
+    const endOfWeek = moment().endOf('week').toDate()
+
+    let newData = [
+      {
+        day: 'Sun',
+        points: 0
+      },
+      {
+        day: 'Mon',
+        points: 0
+      },
+      {
+        day: 'Tue',
+        points: 0
+      },
+      {
+        day: 'Wed',
+        points: 0
+      },
+      {
+        day: 'Thu',
+        points: 0
+      },
+      {
+        day: 'Fri',
+        points: 0
+      },
+      {
+        day: 'Sat',
+        points: 0
+      }
+    ]
+
+    if (userData.exp.length === 0) return setChartData(newData)
+
+    const filteredExp = userData.exp.filter(
+      (exp) =>
+        new Date(exp.dateEarned) >= startOfWeek &&
+        new Date(exp.dateEarned) <= endOfWeek
+    )
+
+    filteredExp.forEach((exp, index) => {
+      newData[index] = {
+        ...newData[index],
+        points: exp.amount
+      }
+    })
+
+    newData = newData.slice(
+      0,
+      moment(endOfWeek).format('d') - moment().format('d') + 1
+    )
+
+    setChartData(newData)
+  }, [userData])
 
   if (isLoggedIn() === 2)
     return (
@@ -199,10 +260,14 @@ const Landing = () => {
                   Place: {addNumberSuffix(currentLeaderboard?.place)}
                 </StatData>
                 <StatData>
-                  Exp: {truncateNumber(currentLeaderboard?.data?.exp?.reduce(
+                  Exp:{' '}
+                  {truncateNumber(
+                    currentLeaderboard?.data?.exp?.reduce(
                       (prev, current) => prev + current.amount,
                       0
-                    ), 2)}
+                    ),
+                    2
+                  )}
                 </StatData>
                 <StatData>
                   Prestige: {currentLeaderboard?.data?.prestiges}
@@ -232,15 +297,16 @@ const Landing = () => {
                 fontSize: '15px',
                 marginLeft: '-2em'
               }}
-              data={data}>
-              <Line type="monotone" dataKey="time" stroke={theme.accent} />
+              data={chartData}>
+              <Line type="monotone" dataKey="points" stroke={theme.accent} />
+              <Tooltip />
               <XAxis
                 dataKey="day"
                 tick={{ fill: theme.secondaryMuted }}
                 stroke={theme.secondaryMuted}
               />
               <YAxis
-                dataKey="time"
+                dataKey="points"
                 tick={{ fill: theme.secondaryMuted }}
                 stroke={theme.secondaryMuted}
               />
@@ -289,17 +355,15 @@ const Landing = () => {
         </CompetitorContainer>
       </BlockContainer>
 
-      {userData.exp.reduce(
-        (prev, current) => prev + current.amount,
-        0
-      ) >= 1000000 && (
+      {userData.exp.reduce((prev, current) => prev + current.amount, 0) >=
+        1000000 && (
         <PrestigeButton onClick={PrestigeUser}>Prestige Now</PrestigeButton>
       )}
 
       <BlockHeader>Recent</BlockHeader>
       <BlockContainer>
         {userData.userSets?.length > 0 &&
-          userData.userSets.map((set) => {
+          userData.userSets.slice(0, 3).map((set) => {
             return (
               <RecentStudyContainer
                 id={set._id}

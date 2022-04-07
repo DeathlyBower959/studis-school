@@ -41,10 +41,10 @@ const Wrapper = styled.div`
   border-radius: 50%;
   position: relative;
 
-  cursor: pointer;
+  /* cursor: pointer; */
 `
 
-const ImageContent = styled.img`
+const ImageContent = styled.img.attrs({ draggable: false })`
   position: absolute;
   top: ${(props) => props.$offset?.y || 0}%;
   left: ${(props) => props.$offset?.x || 0}%;

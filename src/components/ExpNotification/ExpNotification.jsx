@@ -8,7 +8,7 @@ const ExpNotifications = ({ expNotification, setExpNotification }) => {
     const AnimationEnd = () => {
       setExpNotification(null)
     }
-
+    
     wrapperRef.current?.addEventListener('animationend', AnimationEnd)
     return () =>
       wrapperRef.current?.removeEventListener('animationend', AnimationEnd)
@@ -32,7 +32,7 @@ const ExpNotificationWrapper = styled.div`
 
   @keyframes floatUp {
     0% {
-      bottom: -10em;
+      bottom: -6em;
       opacity: 0;
     }
     45% {
@@ -55,7 +55,7 @@ const ExpNotificationWrapper = styled.div`
       opacity: 0;
     }
     100% {
-      bottom: -10em;
+      bottom: -6em;
       opacity: 0;
     }
   }

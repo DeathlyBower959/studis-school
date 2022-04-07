@@ -5,7 +5,7 @@ const prodURL = 'https://studis-server.vercel.app'
 const devServer = false
 
 // Turns the app into developer mode, so it logs more verbose messages (Not used yet)
-const DEV_MODE = true
+const DEV_MODE = false
 
 const apiURL = devServer ? devURL : prodURL
 

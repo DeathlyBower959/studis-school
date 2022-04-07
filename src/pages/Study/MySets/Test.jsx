@@ -1,6 +1,12 @@
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
-import React, { useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import Account from '../../../contexts/AccountContext'
 import Form from '../../../components/Forms/Form'
 import useForm from '../../../hooks/useForm'
@@ -10,8 +16,8 @@ import { expToAdd } from '../../../constants/ranks'
 import { updateUser } from '../../../api/user'
 import ExpNotifications from '../../../components/ExpNotification/ExpNotification'
 
-import fuzzysort from 'fuzzysort'
 import { calculateRank } from '../../../utils/ranking'
+import { hammingDistance } from '../../../utils/strings'
 
 const TestingSet = () => {
   const { setId } = useParams()
@@ -21,8 +27,16 @@ const TestingSet = () => {
   const [testItems, setTestItems] = useState([])
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [expNotification, setExpNotification] = useState(null)
+  const [testErrors, setTestErrors] = useState({})
 
-  const dataIndex = userData?.userSets?.findIndex((set) => set._id === setId)
+  const data = useRef(null)
+
+  useEffect(() => {
+    data.current =
+      userData.userSets[
+        userData?.userSets?.findIndex((set) => set._id === setId)
+      ]
+  }, [userData, setId])
 
   const SubmitTest = async () => {
     let incorrectAnswers = {}
@@ -32,14 +46,19 @@ const TestingSet = () => {
           (def) => def === testItem.def
         )
         if (values[`q${testIndex + 1}`] !== `c${correctAnswerIndex + 1}`)
-          incorrectAnswers[`q${testIndex + 1}`] = true
+          incorrectAnswers[`q${testIndex + 1}`] = `Correct Answer: Option ${
+            correctAnswerIndex + 1
+          }`
       } else {
-        const fuzzyResult = fuzzysort.single(
-          values[`q${testIndex + 1}`].trim().toLowerCase(),
+        const distance = hammingDistance(
+          values[`q${testIndex + 1}`]?.trim()?.toLowerCase(),
           testItem.term.trim().toLowerCase()
         )
-        if (fuzzyResult?.score <= -3)
-          incorrectAnswers[`q${testIndex + 1}`] = true
+
+        if (distance > 2)
+          incorrectAnswers[
+            `q${testIndex + 1}`
+          ] = `Correct Answer: ${testItem.term.trim()}`
       }
     })
 
@@ -49,11 +68,12 @@ const TestingSet = () => {
         100
     )
 
-    const points =
-      Math.floor((expToAdd() * score) / 100) *
-      calculateRank(
-        userData.exp.reduce((prev, current) => prev + current.amount, 0)
-      ).multiplier
+    const points = Math.floor(
+      ((expToAdd() * score) / 100) *
+        calculateRank(
+          userData.exp.reduce((prev, current) => prev + current.amount, 0)
+        ).multiplier
+    )
 
     const updateResult = await updateUser(localAuth, {
       exp: `+${points}`
@@ -62,6 +82,8 @@ const TestingSet = () => {
     if (updateResult.status === 200) {
       setUserData(updateResult.data.newUser)
       setIsSubmitted(true)
+
+      setTestErrors(incorrectAnswers)
 
       setExpNotification(points)
     }
@@ -112,10 +134,10 @@ const TestingSet = () => {
     }
   )
 
-  const data = userData.userSets[dataIndex]
-
   useEffect(() => {
-    const shuffled = data.terms
+    if (!data.current) return setTestItems(null)
+    
+    const shuffled = data.current.terms
       .sort(() => Math.random() - 0.5)
       .map((testItem) => {
         const responseType = Math.random() < 0.5 ? 'choice' : 'input'
@@ -128,7 +150,7 @@ const TestingSet = () => {
 
         let alternateDefs = []
 
-        let avaliable = [...data.terms].filter(
+        let avaliable = [...data.current.terms].filter(
           (term) => term.term !== testItem.term
         )
 
@@ -152,11 +174,10 @@ const TestingSet = () => {
         }
       })
 
-    if (dataIndex >= 0) setTestItems(shuffled.slice(0, 15))
-    else setTestItems(null)
-  }, [data, dataIndex])
+    setTestItems(shuffled.slice(0, 15))
+  }, [])
 
-  if (dataIndex < 0)
+  if (!data.current)
     return (
       <>
         <Header>Not Found</Header>
@@ -176,7 +197,7 @@ const TestingSet = () => {
 
   return (
     <>
-      <Header>{data.title}</Header>
+      <Header>{data.current.title}</Header>
       <TestWrapper>
         {testItems.map((testItem, testIndex) => {
           return (
@@ -187,9 +208,13 @@ const TestingSet = () => {
               {errors[`q${testIndex + 1}`] && (
                 <ErrorMessage>{errors[`q${testIndex + 1}`]}</ErrorMessage>
               )}
+              {testErrors[`q${testIndex + 1}`] && (
+                <ErrorMessage>{testErrors[`q${testIndex + 1}`]}</ErrorMessage>
+              )}
               <OptionWrapper>
                 {testItem.type === 'choice' && testItem.alternateDefs[0] && (
                   <OptionChoice
+                    disabled={isSubmitted}
                     name={`q${testIndex + 1}`}
                     value="c1"
                     labelText={testItem.alternateDefs[0]}
@@ -199,6 +224,7 @@ const TestingSet = () => {
                 )}
                 {testItem.type === 'choice' && testItem.alternateDefs[1] && (
                   <OptionChoice
+                    disabled={isSubmitted}
                     name={`q${testIndex + 1}`}
                     value="c2"
                     labelText={testItem.alternateDefs[1]}
@@ -208,6 +234,7 @@ const TestingSet = () => {
                 )}
                 {testItem.type === 'choice' && testItem.alternateDefs[2] && (
                   <OptionChoice
+                    disabled={isSubmitted}
                     name={`q${testIndex + 1}`}
                     value="c3"
                     labelText={testItem.alternateDefs[2]}
@@ -217,6 +244,7 @@ const TestingSet = () => {
                 )}
                 {testItem.type === 'choice' && testItem.alternateDefs[3] && (
                   <OptionChoice
+                    disabled={isSubmitted}
                     name={`q${testIndex + 1}`}
                     value="c4"
                     labelText={testItem.alternateDefs[3]}
@@ -228,9 +256,10 @@ const TestingSet = () => {
                 {/* Input */}
                 {testItem.type === 'input' && (
                   <OptionInput
+                    disabled={isSubmitted}
                     name={`q${testIndex + 1}`}
                     onChange={handleChange}
-                    value={values[`q${testIndex + 1}`]}
+                    value={values[`q${testIndex + 1}`] || ''}
                   />
                 )}
               </OptionWrapper>
@@ -238,7 +267,18 @@ const TestingSet = () => {
             </React.Fragment>
           )
         })}
-        <Form.Button onClick={handleSubmit}>Submit</Form.Button>
+        {isSubmitted ? (
+          <Form.Button
+            onClick={() => {
+              window.location.reload()
+            }}>
+            Restart
+          </Form.Button>
+        ) : (
+          <Form.Button onClick={handleSubmit} disabled={isSubmitted}>
+            Submit
+          </Form.Button>
+        )}
       </TestWrapper>
       <br />
       <ExpNotifications

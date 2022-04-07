@@ -1,5 +1,5 @@
 export const MOBILE = {
-    navbar: '650px',
+    navbar: '800px',
     studyDivider: '900px',
     studyCreate: '650px',
     settings: '650px',
