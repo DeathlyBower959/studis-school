@@ -163,17 +163,15 @@ const Landing = () => {
         new Date(exp.dateEarned) <= endOfWeek
     )
 
-    filteredExp.forEach((exp, index) => {
-      newData[index] = {
-        ...newData[index],
+    filteredExp.forEach((exp) => {
+      const dayEarned = moment(exp.dateEarned).day()
+      newData[dayEarned] = {
+        ...newData[dayEarned],
         points: exp.amount
       }
     })
 
-    newData = newData.slice(
-      0,
-      moment(endOfWeek).format('d') - moment().format('d') + 1
-    )
+    newData = newData.slice(0, moment().add(1, 'day').format('d'))
 
     setChartData(newData)
   }, [userData])
