@@ -165,7 +165,7 @@ const App = () => {
     setUserData(null)
     setLocalAuth(null)
     navigate('/login', { replace: true })
-  }, [navigate])
+  }, [])
 
   // Function to log the user in.
   // If email and password are supplied, attempts to log in user

@@ -12,20 +12,20 @@ const ProfilePicture = ({ profilePicture, borderSize, height }) => {
 
   return (
     <Wrapper $height={height} $borderSize={borderSize}>
-      {!isImageLoaded && <img src={avatarPlaceholder} />}
+      {!isImageLoaded && <img src={avatarPlaceholder} alt='Profile'/>}
       <ImageContent
         style={imageStyle}
         $offset={
-          images.find((image) => image.picture.name === profilePicture)?.picture
-            ?.offset || { x: -12, y: -12 }
+          (images.find((image) => image.picture.name === profilePicture)?.picture
+          ?.offset) || { x: -12, y: -12 }
         }
         $scale={
-          images.find((image) => image.picture.name === profilePicture)?.picture
-            ?.scale || 0.85
+          (images.find((image) => image.picture.name === profilePicture)?.picture
+          ?.scale) || 0.85
         }
         width="125%"
         src={
-          images.find((image) => image.picture.name === profilePicture)?.src ||
+          (images.find((image) => image.picture.name === profilePicture)?.src) ||
           avatarPlaceholder
         }
         onLoad={() => setIsImageLoaded(true)}
