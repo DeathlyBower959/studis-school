@@ -116,7 +116,16 @@ function UserProfile() {
       </HeaderWrapper>
       <UserInformationWrapper>
         <LeftWrapper>
-          <UserEXP>Exp: {truncateNumber(currentUser.exp.reduce((prev, current) => prev + current.amount, 0), 2)}</UserEXP>
+          <UserEXP>
+            Exp:{' '}
+            {truncateNumber(
+              currentUser.exp.reduce(
+                (prev, current) => prev + current.amount,
+                0
+              ),
+              2
+            )}
+          </UserEXP>
           <UserLeaderboard>
             Leaderboard: {addNumberSuffix(currentUser.leaderboard)}
           </UserLeaderboard>
@@ -131,7 +140,10 @@ function UserProfile() {
               "Hmm, seems like I don't have a unique biography yet! Just know that I am very amazing, creative, and overall awesome person!"}
           </UserBiography>
           <UserProfileWrapper>
-            <ProfilePicture profilePicture={currentUser.profilePicture} />
+            <ProfilePicture
+              profilePicture={currentUser.profilePicture}
+              borderSize="3px"
+            />
           </UserProfileWrapper>
         </RightWrapper>
 

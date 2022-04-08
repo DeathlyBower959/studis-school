@@ -12,11 +12,11 @@ import ExpNotifications from '../../../components/ExpNotification/ExpNotificatio
 const FlashSaved = () => {
   const { setId } = useParams()
 
-  const { userData, localAuth } = useContext(Account)
+  const { userData, localAuth, setUserData } = useContext(Account)
 
   const [termIndex, setTermIndex] = useState(0)
   const [expNotification, setExpNotification] = useState(null)
-  
+
   const lastInteracted = useRef(0)
 
   const dataIndex = userData?.savedSets?.findIndex((set) => set._id === setId)
@@ -37,11 +37,19 @@ const FlashSaved = () => {
   useEffect(() => {
     const expInterval = setInterval(async () => {
       if (lastInteracted.current + expDelay >= Date.now()) {
-        const newExp = Math.floor(expToAdd() * calculateRank(userData.exp.reduce((prev, current) => prev + current.amount, 0)).multiplier)
+        const newExp = Math.floor(
+          expToAdd() *
+            calculateRank(
+              userData.exp.reduce((prev, current) => prev + current.amount, 0)
+            ).multiplier
+        )
         const updateUserResult = await updateUser(localAuth, {
           exp: `+${newExp}`
         })
-        if (updateUserResult.status === 200) sendExpNotification(newExp)
+        if (updateUserResult.status === 200) {
+          setUserData(updateUserResult.data.newUser)
+          sendExpNotification(newExp)
+        }
       }
     }, expDelay)
 
@@ -73,14 +81,19 @@ const FlashSaved = () => {
           {data.terms &&
             data.terms?.length > 0 &&
             data.terms.map((term, index) => {
+              if (termIndex !== index) return <></>
               return (
                 <CardContainer
                   key={term._id}
                   index={index}
                   termIndex={termIndex}
                   minw="5em"
-                  prefferedw="20em"
+                  prefferedw="40vw"
                   maxw="50em"
+
+                  minh="9em"
+                  prefferedh="20vw"
+                  maxh="25em"
                   front={
                     <>
                       <TermTitle>{term.term}</TermTitle>
@@ -103,7 +116,10 @@ const FlashSaved = () => {
         </CardIndex>
         <StyledArrowRight onClick={nextCard} />
       </CardNav>
-      <ExpNotifications expNotification={expNotification} setExpNotification={setExpNotification}/>
+      <ExpNotifications
+        expNotification={expNotification}
+        setExpNotification={setExpNotification}
+      />
     </>
   )
 }
@@ -111,10 +127,19 @@ const FlashSaved = () => {
 const Header = styled.p`
   color: ${(props) => props.theme.foreground};
   font-size: 2em;
-  margin-bottom: 0.5em;
+  margin: 0.25em;
 
-  width: 100%;
+  /* width: 100%; */
+  /* text-align: center; */
+
+  width: 11ch;
+  overflow-wrap: anywhere;
+  word-wrap: break-all;
+
   text-align: center;
+
+  overflow: hidden overlay;
+  width: 100%;
 `
 
 const Description = styled.p`
@@ -132,6 +157,7 @@ const CardWrapper = styled.div`
 
   padding: 2em 0 1em 0;
 `
+
 const InnerCardContainer = styled.div`
   width: 50%;
   height: 100%;
@@ -156,6 +182,14 @@ const TermTitle = styled.p`
 
 const TermDef = styled.p`
   color: ${(props) => props.theme.secondaryForeground};
+
+  overflow-wrap: anywhere;
+  word-wrap: break-all;
+
+  text-align: center;
+
+  overflow: hidden overlay;
+  width: 100%;
 `
 
 const StyledArrowLeft = styled(ArrowLeft).attrs({ size: '1.75em' })`

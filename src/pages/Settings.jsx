@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid'
 // Constants
 import { themes } from '../constants/defaultThemes.json'
 
+import {shuffle} from '../utils/arrays'
+
 // Components
 import Form from '../components/Forms/Form'
 

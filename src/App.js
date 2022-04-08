@@ -360,15 +360,6 @@ const App = () => {
                   element={<StudyMySetsTest />}
                 />
 
-                {/* <Route
-                  path="/study/saved/learn/:setId"
-                  element={<StudySavedSetsetsLearn />}
-                />
-                <Route
-                  path="/study/sets/learn/:setId"
-                  element={<StudyMySetsLearn />}
-                /> */}
-
                 {/* Dictionary (Saved Words) */}
                 <Route path="/words" element={<Words />} />
                 <Route path="/words/new" element={<WordsNew />} />
@@ -404,7 +395,7 @@ const WebsiteBackground = styled.div`
 `
 
 const GlobalStyle = createGlobalStyle`
-  body::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     background-color: ${(props) => props.theme.scrollbarColor};
   }  
 
@@ -434,9 +425,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item-list .recharts-tooltip-item
- {
-   color: ${(props) => props.theme.muted} !important;
- }
+  {
+    color: ${(props) => props.theme.muted} !important;
+  }
 `
 
 export default App

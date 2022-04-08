@@ -123,31 +123,6 @@ const WordContainer = styled.div`
   justify-content: center;
 `
 
-const WordWrapper = styled.div`
-  /* text-decoration: none;
-  background-color: ${(props) => props.theme.secondaryBackground};
-  flex: 1 1 25%;
-  min-width: 17em;
-  max-width: 25%;
-
-  padding: 1em;
-  border-radius: 15px;
-
-  position: relative;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  transition: transform 350ms ease-in-out;
-
-  &:hover {
-    transform: scale(1.03);
-  } */
-`
-
 const WordTitle = styled.p`
   font-size: 1.75em;
   margin: 0.25em;

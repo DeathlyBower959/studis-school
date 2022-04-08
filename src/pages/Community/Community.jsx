@@ -1,31 +1,26 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { getCommunity, getLeaderboard } from '../../api/community'
 import Account from '../../contexts/AccountContext'
 import ToastNotif from '../../contexts/ToastNotifContext'
-import avatarPlaceholder from '../../assets/avatar_placeholder.png'
 import { truncateString } from '../../utils/strings'
 
 import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../atoms/Loaders/Spinner'
 import Form from '../../components/Forms/Form'
-import { CardContainer } from '../../components/Cards/WordCard'
-import useProfilePicture from '../../hooks/useProfilePicture'
 import { truncateNumber } from '../../utils/numbers'
 import VoteArrow from '../../assets/svg/VoteArrow'
 import ProfilePicture from '../../atoms/ProfilePicture'
+import UserTitle from '../../components/UserTitle'
 
 function Community() {
   const { userData } = useContext(Account)
   const SendToast = useContext(ToastNotif)
-  const theme = useContext(ThemeContext)
 
   const [currentLeaderboard, setCurrentLeaderboard] = useState()
   const [currentCommunity, setCurrentCommunity] = useState()
-
-  const { imgLoadings, imgErrors, images } = useProfilePicture()
 
   const GetLeaders = async () => {
     const leadersResult = await getLeaderboard()
@@ -74,7 +69,7 @@ function Community() {
                     as={Link}
                     to={`/community/user/${user.userId}`}>
                     <LeftWrapper>
-                      <ProfilePicture profilePicture={user.profilePicture}/>
+                      <ProfilePicture profilePicture={user.profilePicture} borderSize='3px'/>
                       <Username $isCurrentUser={user.userId === userData?._id}>
                         {truncateString(user.name, 18)}
                       </Username>

@@ -6,20 +6,17 @@ import { ArrowDown } from 'react-feather'
 
 import { truncateString } from '../../utils/strings'
 
-import avatarPlaceholder from '../../assets/avatar_placeholder.png'
 import Account from '../../contexts/AccountContext'
 import { Link } from 'react-router-dom'
 import Spinner from '../../atoms/Loaders/Spinner'
-import useProfilePicture from '../../hooks/useProfilePicture'
 import { truncateNumber } from '../../utils/numbers'
 import ProfilePicture from '../../atoms/ProfilePicture'
+import UserTitle from '../../components/UserTitle'
 
 function Leaders() {
   const SendToast = useContext(ToastNotif)
   const { userData } = useContext(Account)
   const [currentLeaderboard, setCurrentLeaderboard] = useState()
-
-  const { imgErrors, imgLoadings, images } = useProfilePicture()
 
   const currentUserWrapperRef = useRef()
 
@@ -73,7 +70,7 @@ function Leaders() {
 
       return () => observer.unobserve(currentObserved)
     }
-  }, [currentUserWrapperRef.current])
+  }, [currentUserWrapperRef])
 
   return (
     <>
@@ -95,14 +92,26 @@ function Leaders() {
                             : null
                         }>
                         <LeftWrapper>
-                          <ProfilePicture profilePicture={user.profilePicture}/>
+                          <ProfilePicture
+                            borderSize="3px"
+                            profilePicture={user.profilePicture}
+                          />
                           <Username
                             $isCurrentUser={user.userId === userData?._id}>
                             {truncateString(user.name, 18)}
                           </Username>
                         </LeftWrapper>
                         <RightWrapper>
-                          <UserEXP>EXP: {truncateNumber(user.exp.reduce((prev, current) => prev + current.amount, 0), 2)}</UserEXP>
+                          <UserEXP>
+                            EXP:{' '}
+                            {truncateNumber(
+                              user.exp.reduce(
+                                (prev, current) => prev + current.amount,
+                                0
+                              ),
+                              2
+                            )}
+                          </UserEXP>
                           <UserPrestige>
                             Prestige: {user.prestiges}
                           </UserPrestige>

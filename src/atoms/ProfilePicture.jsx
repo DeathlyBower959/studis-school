@@ -3,7 +3,7 @@ import useProfilePicture from '../hooks/useProfilePicture'
 import avatarPlaceholder from '../assets/avatar_placeholder.png'
 import { useState } from 'react'
 
-const ProfilePicture = ({ profilePicture, height }) => {
+const ProfilePicture = ({ profilePicture, borderSize, height }) => {
   const { imgErrors, imgLoadings, images } = useProfilePicture()
 
   const [isImageLoaded, setIsImageLoaded] = useState(true)
@@ -11,7 +11,7 @@ const ProfilePicture = ({ profilePicture, height }) => {
   const imageStyle = isImageLoaded ? {} : { display: 'none' }
 
   return (
-    <Wrapper $height={height}>
+    <Wrapper $height={height} $borderSize={borderSize}>
       {!isImageLoaded && <img src={avatarPlaceholder} />}
       <ImageContent
         style={imageStyle}
@@ -40,6 +40,8 @@ const Wrapper = styled.div`
   overflow: hidden;
   border-radius: 50%;
   position: relative;
+
+  border: ${props => props.$borderSize || '4px'}  solid ${props => props.theme.accent};
 
   /* cursor: pointer; */
 `

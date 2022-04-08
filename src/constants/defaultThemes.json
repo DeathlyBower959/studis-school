@@ -34,7 +34,7 @@
       "muted": "#a0a0a0",
       "secondaryMuted": "#808080",
 
-      "outline": "#v",
+      "outline": "#2e2e2e",
 
       "disabledText": "#545454",
 
@@ -48,9 +48,9 @@
       "scrollbarColor": "#9c9c9c",
 
       "navbar": {
-        "background": "#d8d8d8",
+        "background": "#e3e3e3",
         "foreground": "#a1a1a1",
-        "outline": "#bbb"
+        "outline": "#bcbcbc"
       },
 
       "expNotif": {
@@ -59,27 +59,67 @@
         "border": "#764548"
       },
 
-      "foreground": "#3f3f3f",
+      "foreground": "#5e5e5e",
       "secondaryForeground": "#707070",
-      "tertiaryForeground": "#a8a8a8",
+      "tertiaryForeground": "#919191",
 
       "accent": "#819ce3",
       "secondaryAccent": "#3b72ff",
 
-      "background": "#fafafa",
-      "secondaryBackground": "#e6e6e6",
-      "tertiaryBackground": "#d2d2d2",
+      "background": "#ededed",
+      "secondaryBackground": "#d8d8d8",
+      "tertiaryBackground": "#ddd",
       "quaternaryBackground": "#b8b8b8",
-      "inputBackground": "#cecece",
+      "inputBackground": "#c1c1c1",
 
-      "muted": "#545454",
+      "muted": "#747474",
       "secondaryMuted": "#919191",
       "disabledText": "#a1a1a1",
 
-      "outline": "red",
+      "outline": "#a6a6a6",
 
       "error": "#ff3333",
       "success": "#53c953"
+    },
+    {
+      "themeID": "theme.ocean",
+      "name": "Oceanic",
+
+      "scrollbarColor": "#919ab3",
+
+      "navbar": {
+        "background": "#c5cde3",
+        "foreground": "#7c88a6",
+        "outline": "#9facbd"
+      },
+
+      "expNotif": {
+        "foreground": "#afc4ff",
+        "background": "#323d5f",
+        "border": "#455776"
+      },
+
+      "foreground": "#4d525c",
+      "secondaryForeground": "#5b636e",
+      "tertiaryForeground": "#707d8c",
+
+      "accent": "#819ce3",
+      "secondaryAccent": "#3b72ff",
+
+      "background": "#d5dfeb",
+      "secondaryBackground": "#c3d1e8",
+      "tertiaryBackground": "#bfc9e3",
+      "quaternaryBackground": "#a3acb8",
+      "inputBackground": "#aebbd6",
+
+      "muted": "#444f5e",
+      "secondaryMuted": "#798291",
+      "disabledText": "#8791a3",
+
+      "outline": "#8e95a3",
+
+      "error": "#ff6969",
+      "success": "#71c771"
     },
     {
       "themeID": "themes.forest",

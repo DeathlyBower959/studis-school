@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import profile_pictures from '../assets/profile_pictures.json'
+import { shuffle } from '../utils/arrays'
 
 // const throwErrorUseProfilePicture = () => {
 //   const [imgLoadings, setLoadings] = useState([])
@@ -74,12 +75,12 @@ const useProfilePicture = () => {
     }
 
     profile_pictures.forEach(fetchImage)
-  }, [profile_pictures])
+  }, [])
 
   return {
     imgLoadings,
     imgErrors,
-    images
+    images: shuffle(images, 123213123)
   }
 }
 

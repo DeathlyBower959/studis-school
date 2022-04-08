@@ -12,7 +12,6 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
-  Legend,
   Tooltip
 } from 'recharts'
 
@@ -35,49 +34,13 @@ import Account from '../contexts/AccountContext'
 // Utils
 import { addNumberSuffix, truncateString } from '../utils/strings'
 
-// Images
-import avatarPlaceholder from '../assets/avatar_placeholder.png'
-
 import { updateUser } from '../api/user'
-import useProfilePicture from '../hooks/useProfilePicture'
 import { truncateNumber } from '../utils/numbers'
 import LeftCompetitorArrow from '../assets/svg/LeftCompetitorArrow'
 import RightCompetitorArrow from '../assets/svg/RightCompetitorArrow'
 import VoteArrow from '../assets/svg/VoteArrow'
 import ProfilePicture from '../atoms/ProfilePicture'
 import moment from 'moment'
-
-// FAKE DATA
-const data = [
-  {
-    day: 'Sun',
-    points: 88
-  },
-  {
-    day: 'Mon',
-    points: 344
-  },
-  {
-    day: 'Tue',
-    points: 102
-  },
-  {
-    day: 'Wed',
-    points: 288
-  },
-  {
-    day: 'Thu',
-    points: 153
-  },
-  {
-    day: 'Fri',
-    points: 60
-  },
-  {
-    day: 'Sat',
-    points: 0
-  }
-]
 
 const Landing = () => {
   const navigate = useNavigate()
@@ -127,31 +90,31 @@ const Landing = () => {
     let newData = [
       {
         day: 'Sun',
-        points: 0
+        Points: 0
       },
       {
         day: 'Mon',
-        points: 0
+        Points: 0
       },
       {
         day: 'Tue',
-        points: 0
+        Points: 0
       },
       {
         day: 'Wed',
-        points: 0
+        Points: 0
       },
       {
         day: 'Thu',
-        points: 0
+        Points: 0
       },
       {
         day: 'Fri',
-        points: 0
+        Points: 0
       },
       {
         day: 'Sat',
-        points: 0
+        Points: 0
       }
     ]
 
@@ -167,7 +130,7 @@ const Landing = () => {
       const dayEarned = moment(exp.dateEarned).day()
       newData[dayEarned] = {
         ...newData[dayEarned],
-        points: exp.amount
+        Points: exp.amount
       }
     })
 
@@ -284,6 +247,7 @@ const Landing = () => {
             )}
           </StatDataContainer>
           <ProfilePicture
+            borderSize="4px"
             height="7em"
             profilePicture={userData.profilePicture}
           />
@@ -296,7 +260,7 @@ const Landing = () => {
                 marginLeft: '-2em'
               }}
               data={chartData}>
-              <Line type="monotone" dataKey="points" stroke={theme.accent} />
+              <Line type="monotone" dataKey="Points" stroke={theme.accent} />
               <Tooltip />
               <XAxis
                 dataKey="day"
@@ -304,7 +268,7 @@ const Landing = () => {
                 stroke={theme.secondaryMuted}
               />
               <YAxis
-                dataKey="points"
+                dataKey="Points"
                 tick={{ fill: theme.secondaryMuted }}
                 stroke={theme.secondaryMuted}
               />

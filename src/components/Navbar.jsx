@@ -298,7 +298,7 @@ const Separator = styled.hr`
   display: none;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     display: block;
-    border: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border: 1px solid ${(props) => props.theme.navbar.outline};
   }
 `
 

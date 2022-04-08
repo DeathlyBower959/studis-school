@@ -45,7 +45,7 @@ const Dropdown = ({ children, title, img, tb }) => {
         }}
         tabIndex={tb}>
         {img ? (
-          <ProfilePicture height='2.5em' profilePicture={img}/>
+          <ProfilePicture height='2.5em' borderSize='2px' profilePicture={img}/>
         ) : (
           <DropdownLink>{title}</DropdownLink>
         )}
@@ -96,11 +96,11 @@ const DropdownWrapper = styled.div`
   transition: margin-top 450ms ease-out, opacity 500ms ease-out;
 
   opacity: ${(props) => (props.$isDropdownOpen ? '1' : '0')};
-  margin-top: ${(props) => (props.$isDropdownOpen ? '0' : '-2em')};
+  margin-top: ${(props) => (props.$isDropdownOpen ? '0.5em' : '-2em')};
   z-index: -1;
   @media only screen and (max-width: ${MOBILE.navbar}) {
     left: 0;
-    margin-top: ${(props) => (props.$isDropdownOpen ? '0' : '-3em')};
+    margin-top: ${(props) => (props.$isDropdownOpen ? '0.5em' : '-3em')};
     padding-top: 0;
   }
 `

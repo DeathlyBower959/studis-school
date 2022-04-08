@@ -28,18 +28,24 @@ const StyledCardContainer = styled.div`
     ${(props) => props.prefferedw},
     ${(props) => props.maxw}
   );
-  height: 9em;
+  height: clamp(
+    ${(props) => props.minh || '9em'},
+    ${(props) => props.prefferedh || '9em'},
+    ${(props) => props.maxh || '9em'}
+  );
   perspective: 1000px;
   cursor: pointer;
 
-  flex: 1 1 25%;
   min-width: 17em;
-  max-width: 25%;
+  min-height: 9em;
+  /* flex: 1 1 25%; */
+  /* max-width: 25%; */
 `
 
 const CardWrapper = styled.div`
   width: 100%;
   height: 100%;
+  border-radius: 8px;
   text-align: center;
   transform-style: preserve-3d;
   box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.2);
@@ -79,7 +85,7 @@ const StyledCardFront = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1em 2em;
+  padding: 0.25em 1em;
   border-radius: 8px;
 
   transition: transform 400ms ease-in-out;
@@ -100,6 +106,6 @@ const StyledCardBack = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1em 2em;
+  padding: 0.25em 1em;
   border-radius: 8px;
 `
